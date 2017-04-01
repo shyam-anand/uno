@@ -1,25 +1,24 @@
 package co.unobot.uno.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
 /**
- * Created by shyam on 30/03/17
+ * Created by shyam on 02/04/17.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class User {
+public class Business {
 
     @JsonProperty("id")
     private String id;
 
-    @JsonProperty("name")
     private String name;
 
-    @JsonIgnore
-    private List<Business> interactedBusinesses;
+    private String type;
+
+    private List<User> customers;
 
     public String getId() {
         return id;
@@ -37,11 +36,19 @@ public class User {
         this.name = name;
     }
 
-    public List<Business> getInteractedBusinesses() {
-        return interactedBusinesses;
+    public String getType() {
+        return type;
     }
 
-    public void setInteractedBusinesses(List<Business> interactedBusinesses) {
-        this.interactedBusinesses = interactedBusinesses;
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public List<User> getCustomers() {
+        return customers;
+    }
+
+    public void setCustomers(List<User> customers) {
+        this.customers = customers;
     }
 }

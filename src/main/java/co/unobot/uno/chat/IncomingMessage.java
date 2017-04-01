@@ -1,5 +1,6 @@
-package co.unobot.uno.models;
+package co.unobot.uno.chat;
 
+import co.unobot.uno.models.User;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**

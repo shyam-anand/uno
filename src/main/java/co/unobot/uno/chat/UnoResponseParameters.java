@@ -1,10 +1,10 @@
-package co.unobot.uno.models;
+package co.unobot.uno.chat;
 
 import java.util.List;
 import java.util.Map;
 
 /**
- * Created by shyam on 01/04/17.
+ * Created by shyam on 01/04/17
  */
 public class UnoResponseParameters {
 

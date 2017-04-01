@@ -1,4 +1,4 @@
-package co.unobot.uno.models;
+package co.unobot.uno.chat;
 
 import ai.api.model.Result;
 import com.fasterxml.jackson.annotation.JsonIgnore;
