@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,8 +21,11 @@ public class WebHook {
     private static final Logger logger = LoggerFactory.getLogger(WebHook.class);
 
     @RequestMapping(method = {RequestMethod.POST, RequestMethod.GET})
-    public ResponseEntity webHookPost(HttpServletRequest request) {
+    public ResponseEntity webHookPost(HttpServletRequest request,
+                                      @RequestParam(value = "hub.mode") String hubMode,
+                                      @RequestParam(value = "hub.challenge") String hubChallenge) {
         logger.info(request.getMethod() + " - " + request.getQueryString());
-        return new ResponseEntity(HttpStatus.OK);
+
+        return new ResponseEntity<>(hubChallenge, HttpStatus.OK);
     }
 }
