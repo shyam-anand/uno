@@ -46,6 +46,9 @@ public class Facebook {
         @JsonProperty("mid")
         private String mid;
 
+        public SendAPIResponse() {
+        }
+
         public String getRecipientId() {
             return recipientId;
         }
