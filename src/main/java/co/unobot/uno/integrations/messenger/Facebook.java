@@ -83,7 +83,8 @@ public class Facebook {
         try {
             Map<String, String> queryString = new HashMap<>();
             queryString.put("access_token", PAGE_ACCESS_TOKEN);
-            ResponseEntity<SendAPIResponse> responseEntity = restTemplate.exchange(MESSAGES_API.toString(), HttpMethod.POST, requestEntity, SendAPIResponse.class, queryString);
+
+            ResponseEntity<SendAPIResponse> responseEntity = restTemplate.exchange(MESSAGES_API.toString().concat("?access_token={access_token}"), HttpMethod.POST, requestEntity, SendAPIResponse.class, queryString);
             if (responseEntity.getStatusCode().is2xxSuccessful()) {
                 SendAPIResponse response = responseEntity.getBody();
                 return response.getMid();
