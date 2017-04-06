@@ -12,15 +12,15 @@ import java.util.List;
 public class FBIncomingMessage {
 
     @JsonProperty("object")
-    private MessageObject object;
+    private String object;
 
     private List<MessageEntry> entry;
 
-    public MessageObject getObject() {
+    public String getObject() {
         return object;
     }
 
-    public void setObject(MessageObject object) {
+    public void setObject(String object) {
         this.object = object;
     }
 
