@@ -77,15 +77,13 @@ public class Facebook {
             logger.warn("Unable to parse object to JSON: " + e.getMessage());
         }
 
-        logger.info("Sending message to Facebook - {}", requestObjAsString);
-
         try {
             URI uri = UriComponentsBuilder.fromUri(MESSAGES_API)
                     .queryParam("access_token", PAGE_ACCESS_TOKEN)
                     .build()
                     .encode()
                     .toUri();
-
+            logger.info("Facebook API call - POST to {} with body {}", uri.toASCIIString(), requestObjAsString);
             ResponseEntity<SendAPIResponse> responseEntity = restTemplate.exchange(uri, HttpMethod.POST, requestEntity, SendAPIResponse.class);
             if (responseEntity.getStatusCode().is2xxSuccessful()) {
                 SendAPIResponse response = responseEntity.getBody();
