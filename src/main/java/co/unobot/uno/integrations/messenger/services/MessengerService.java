@@ -34,17 +34,26 @@ public class MessengerService {
 
     @Async
     public void receive(FBIncomingMessage fbMessage) {
-        if (fbMessage.getObject().equals(MessageObject.PAGE)) {
+
+        logger.info("Received message - {}", fbMessage);
+
+        if (fbMessage.getObject().equals(MessageObject.PAGE.name())) {
             fbMessage.getEntries().stream().forEach(entry -> {
                 String pageId = entry.getId();
                 long time = entry.getTime();
+
+                logger.info("Page: {}, time: {}", pageId, time);
 
                 entry.getMessaging().stream().forEach(messaging -> {
                     UnoResponse response;
                     sender = messaging.getSender();
                     if (messaging.getMessage() != null) {
                         Message message = messaging.getMessage();
+
                         if (message.getText() != null) {
+
+                            logger.info("Received text message - " + message.getText());
+
                             IncomingMessage unoMessage = new IncomingMessage();
                             unoMessage.setMessage(message.getText());
                             User user = new User();
@@ -54,11 +63,14 @@ public class MessengerService {
                             send(sender, response.getMessage());
                         }
                         if (!message.getAttachments().isEmpty()) {
-
+                            logger.info("Attachments -- ");
+                            message.getAttachments().forEach((attachment) -> attachment.getPayload().forEach((key, value) -> logger.info(key + " -> " + value)));
                         }
                     }
                 });
             });
+        } else {
+            logger.warn("Invalid value for 'object': " + fbMessage.getObject());
         }
     }
 
