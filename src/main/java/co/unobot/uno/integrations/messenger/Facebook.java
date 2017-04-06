@@ -14,6 +14,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Wrapper class for Facebook APIs. This class can be extended by services
  * that need to use Facebook APIs.
@@ -27,11 +32,11 @@ public class Facebook {
     private static final Logger logger = LoggerFactory.getLogger(Facebook.class);
 
     private static String PAGE_ACCESS_TOKEN;
-    private static String MESSAGES_API;
+    private static URI MESSAGES_API;
 
     @Autowired
-    public Facebook(@Value("${uri}") String uri, @Value("${page.accessToken}") String pageAccessToken) {
-        MESSAGES_API = uri;
+    public Facebook(@Value("${uri}") String uri, @Value("${page.accessToken}") String pageAccessToken) throws URISyntaxException {
+        MESSAGES_API = new URI(uri);
         PAGE_ACCESS_TOKEN = pageAccessToken;
     }
 
@@ -76,7 +81,9 @@ public class Facebook {
         logger.info("Sending message to Facebook - {}", requestObjAsString);
 
         try {
-            ResponseEntity<SendAPIResponse> responseEntity = restTemplate.exchange(MESSAGES_API, HttpMethod.POST, requestEntity, SendAPIResponse.class);
+            Map<String, String> queryString = new HashMap<>();
+            queryString.put("access_token", PAGE_ACCESS_TOKEN);
+            ResponseEntity<SendAPIResponse> responseEntity = restTemplate.exchange(MESSAGES_API.toString(), HttpMethod.POST, requestEntity, SendAPIResponse.class, queryString);
             if (responseEntity.getStatusCode().is2xxSuccessful()) {
                 SendAPIResponse response = responseEntity.getBody();
                 return response.getMid();
