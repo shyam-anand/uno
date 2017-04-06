@@ -61,7 +61,7 @@ public class MessengerService {
                             response = uno.getResponse(unoMessage);
                             send(sender, response.getMessage());
                         }
-                        if (!message.getAttachments().isEmpty()) {
+                        if (message.getAttachments() != null && !message.getAttachments().isEmpty()) {
                             logger.info("Attachments -- ");
                             message.getAttachments().forEach((attachment) -> attachment.getPayload().forEach((key, value) -> logger.info(key + " -> " + value)));
                         }

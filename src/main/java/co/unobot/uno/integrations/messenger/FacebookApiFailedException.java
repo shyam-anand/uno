@@ -5,5 +5,6 @@ package co.unobot.uno.integrations.messenger;
  */
 public class FacebookApiFailedException extends Exception {
     public FacebookApiFailedException(String message) {
+        super(message);
     }
 }
