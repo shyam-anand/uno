@@ -13,11 +13,10 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Wrapper class for Facebook APIs. This class can be extended by services
@@ -81,10 +80,13 @@ public class Facebook {
         logger.info("Sending message to Facebook - {}", requestObjAsString);
 
         try {
-            Map<String, String> queryString = new HashMap<>();
-            queryString.put("access_token", PAGE_ACCESS_TOKEN);
+            URI uri = UriComponentsBuilder.fromUri(MESSAGES_API)
+                    .queryParam("access_token", PAGE_ACCESS_TOKEN)
+                    .build()
+                    .encode()
+                    .toUri();
 
-            ResponseEntity<SendAPIResponse> responseEntity = restTemplate.exchange(MESSAGES_API.toString().concat("?access_token={access_token}"), HttpMethod.POST, requestEntity, SendAPIResponse.class, queryString);
+            ResponseEntity<SendAPIResponse> responseEntity = restTemplate.exchange(uri, HttpMethod.POST, requestEntity, SendAPIResponse.class);
             if (responseEntity.getStatusCode().is2xxSuccessful()) {
                 SendAPIResponse response = responseEntity.getBody();
                 return response.getMid();
