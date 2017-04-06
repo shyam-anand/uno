@@ -16,8 +16,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import java.net.URISyntaxException;
-
 /**
  * Created by shyam on 02/04/17.
  */
@@ -31,7 +29,7 @@ public class MessengerService extends Facebook {
 
     private FBUser sender;
 
-    public MessengerService(@Value("${uri}") String uri, @Value("${page.accessToken}") String pageAccessToken) throws URISyntaxException {
+    public MessengerService(@Value("${uri}") String uri, @Value("${page.accessToken}") String pageAccessToken) {
         super(uri, pageAccessToken);
     }
 

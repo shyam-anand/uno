@@ -8,9 +8,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.web.client.RestTemplate;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-
 /**
  * Wrapper class for Facebook APIs. This class can be extended by services
  * that need to use Facebook APIs.
@@ -21,10 +18,10 @@ import java.net.URISyntaxException;
 public abstract class Facebook {
 
     private static String PAGE_ACCESS_TOKEN;
-    private static URI MESSAGES_API;
+    private static String MESSAGES_API;
 
-    public Facebook(String messagesApi, String pageAccessToken) throws URISyntaxException {
-        MESSAGES_API = new URI(messagesApi);
+    public Facebook(String messagesApi, String pageAccessToken) {
+        MESSAGES_API = messagesApi;
         PAGE_ACCESS_TOKEN = pageAccessToken;
     }
 
