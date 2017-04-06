@@ -2,10 +2,14 @@ package co.unobot.uno.integrations.messenger;
 
 import co.unobot.uno.integrations.messenger.models.message.outgoing.FBOutgoingMessage;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -14,14 +18,16 @@ import org.springframework.web.client.RestTemplate;
  *
  * @author Shyam Anand
  */
-
-public abstract class Facebook {
+@PropertySource("messenger.properties")
+@Component
+public class Facebook {
 
     private static String PAGE_ACCESS_TOKEN;
     private static String MESSAGES_API;
 
-    public Facebook(String messagesApi, String pageAccessToken) {
-        MESSAGES_API = messagesApi;
+    @Autowired
+    public Facebook(@Value("${uri}") String uri, @Value("${page.accessToken}") String pageAccessToken) {
+        MESSAGES_API = uri;
         PAGE_ACCESS_TOKEN = pageAccessToken;
     }
 
@@ -53,7 +59,7 @@ public abstract class Facebook {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<?> requestEntity = new HttpEntity<>(headers);
+        HttpEntity<?> requestEntity = new HttpEntity<>(message, headers);
 
         HttpEntity<SendAPIResponse> responseEntity = restTemplate.exchange(MESSAGES_API, HttpMethod.POST, requestEntity, SendAPIResponse.class);
         SendAPIResponse response = responseEntity.getBody();

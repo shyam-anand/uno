@@ -8,33 +8,29 @@ import co.unobot.uno.integrations.messenger.models.FBUser;
 import co.unobot.uno.integrations.messenger.models.message.incoming.FBIncomingMessage;
 import co.unobot.uno.integrations.messenger.models.message.incoming.Message;
 import co.unobot.uno.integrations.messenger.models.message.incoming.MessageObject;
+import co.unobot.uno.integrations.messenger.models.message.outgoing.FBOutgoingMessage;
+import co.unobot.uno.integrations.messenger.models.message.outgoing.Recipient;
 import co.unobot.uno.models.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 /**
  * Created by shyam on 02/04/17.
  */
-@PropertySource("messenger.properties")
 @Service
-public class MessengerService extends Facebook {
+public class MessengerService {
 
     private static final Logger logger = LoggerFactory.getLogger(MessengerService.class);
 
     @Autowired
+    private Facebook facebook;
+    @Autowired
     private UnoService uno;
 
     private FBUser sender;
-
-    @Autowired
-    public MessengerService(@Value("${uri}") String uri, @Value("${page.accessToken}") String pageAccessToken) {
-        super(uri, pageAccessToken);
-    }
 
     @Async
     public void receive(FBIncomingMessage fbMessage) {
@@ -67,6 +63,15 @@ public class MessengerService extends Facebook {
     }
 
     public void send(FBUser user, String messageText) {
+        FBOutgoingMessage outgoingMessage = new FBOutgoingMessage();
+        Recipient recipient = new Recipient();
+        recipient.setId(user.getId());
+        outgoingMessage.setRecipient(recipient);
 
+        Message message = new Message();
+        message.setText(messageText);
+        outgoingMessage.setMessage(message);
+
+        facebook.sendMessage(outgoingMessage);
     }
 }
