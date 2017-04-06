@@ -59,7 +59,7 @@ public class Facebook {
         }
     }
 
-    public String sendMessage(FBOutgoingMessage message) {
+    public String sendMessage(FBOutgoingMessage message) throws FacebookApiFailedException {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -82,9 +82,11 @@ public class Facebook {
                 return response.getMid();
             } else {
                 logger.error("API failed with status: " + responseEntity.getStatusCode().name() + " " + responseEntity.getStatusCode().getReasonPhrase());
+                throw new FacebookApiFailedException(responseEntity.getStatusCode() + " " + responseEntity.getStatusCode().getReasonPhrase());
             }
         } catch (HttpClientErrorException e) {
             logger.error(e.getMessage());
+            throw new FacebookApiFailedException(e.getMessage());
         }
     }
 }
