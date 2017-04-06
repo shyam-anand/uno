@@ -4,6 +4,7 @@ import co.unobot.uno.chat.models.IncomingMessage;
 import co.unobot.uno.chat.models.UnoResponse;
 import co.unobot.uno.chat.services.UnoService;
 import co.unobot.uno.integrations.messenger.Facebook;
+import co.unobot.uno.integrations.messenger.FacebookApiFailedException;
 import co.unobot.uno.integrations.messenger.models.FBUser;
 import co.unobot.uno.integrations.messenger.models.message.incoming.FBIncomingMessage;
 import co.unobot.uno.integrations.messenger.models.message.incoming.Message;
@@ -75,6 +76,10 @@ public class MessengerService {
     public void send(FBUser user, String messageText) {
         FBOutgoingMessage outgoingMessage = new FBOutgoingMessage(user.getId(), messageText);
 
-        facebook.sendMessage(outgoingMessage);
+        try {
+            facebook.sendMessage(outgoingMessage);
+        } catch (FacebookApiFailedException e) {
+            logger.error("Message sending failed: " + e.getMessage());
+        }
     }
 }
