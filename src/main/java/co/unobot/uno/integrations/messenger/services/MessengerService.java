@@ -29,6 +29,7 @@ public class MessengerService extends Facebook {
 
     private FBUser sender;
 
+    @Autowired
     public MessengerService(@Value("${uri}") String uri, @Value("${page.accessToken}") String pageAccessToken) {
         super(uri, pageAccessToken);
     }
