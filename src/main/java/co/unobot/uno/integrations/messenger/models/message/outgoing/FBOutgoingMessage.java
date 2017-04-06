@@ -1,6 +1,5 @@
 package co.unobot.uno.integrations.messenger.models.message.outgoing;
 
-import co.unobot.uno.integrations.messenger.models.message.incoming.Message;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -16,6 +15,17 @@ public class FBOutgoingMessage {
     private SenderAction senderAction;
     @JsonProperty("notification_type")
     private NotificationType notificationType;
+
+    public FBOutgoingMessage() {
+    }
+
+    public FBOutgoingMessage(String recipientId, String messageText) {
+        this.recipient = new Recipient();
+        this.recipient.setId(recipientId);
+
+        this.message = new Message();
+        this.message.setText(messageText);
+    }
 
     public Recipient getRecipient() {
         return recipient;

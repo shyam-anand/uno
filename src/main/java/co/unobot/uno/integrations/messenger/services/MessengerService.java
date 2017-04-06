@@ -8,7 +8,6 @@ import co.unobot.uno.integrations.messenger.models.FBUser;
 import co.unobot.uno.integrations.messenger.models.message.incoming.FBIncomingMessage;
 import co.unobot.uno.integrations.messenger.models.message.incoming.Message;
 import co.unobot.uno.integrations.messenger.models.message.outgoing.FBOutgoingMessage;
-import co.unobot.uno.integrations.messenger.models.message.outgoing.Recipient;
 import co.unobot.uno.models.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,14 +73,7 @@ public class MessengerService {
     }
 
     public void send(FBUser user, String messageText) {
-        FBOutgoingMessage outgoingMessage = new FBOutgoingMessage();
-        Recipient recipient = new Recipient();
-        recipient.setId(user.getId());
-        outgoingMessage.setRecipient(recipient);
-
-        Message message = new Message();
-        message.setText(messageText);
-        outgoingMessage.setMessage(message);
+        FBOutgoingMessage outgoingMessage = new FBOutgoingMessage(user.getId(), messageText);
 
         facebook.sendMessage(outgoingMessage);
     }
