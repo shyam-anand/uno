@@ -1,11 +1,13 @@
 package co.unobot.uno.integrations.messenger.models.message.outgoing;
 
 import co.unobot.uno.integrations.messenger.models.message.Attachment;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Created by shyam on 07/04/17.
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Message {
 
     private String text;
