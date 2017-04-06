@@ -5,7 +5,7 @@ import ai.api.AIDataService;
 import ai.api.AIServiceException;
 import ai.api.model.AIRequest;
 import ai.api.model.AIResponse;
-import co.unobot.uno.chat.UnoResponse;
+import co.unobot.uno.chat.models.UnoResponse;
 import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,0 +1,48 @@
+package co.unobot.uno.integrations.messenger.models.message.incoming;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.util.List;
+
+/**
+ * Created by shyam on 02/04/17.
+ */
+public class FBIncomingMessage {
+
+    @JsonProperty("object")
+    private MessageObject object;
+
+    private List<MessageEntry> entry;
+
+    public MessageObject getObject() {
+        return object;
+    }
+
+    public void setObject(MessageObject object) {
+        this.object = object;
+    }
+
+    public List<MessageEntry> getEntry() {
+        return entry;
+    }
+
+    public void setEntry(List<MessageEntry> entry) {
+        this.entry = entry;
+    }
+
+    public List<MessageEntry> getEntries() {
+        return entry;
+    }
+
+    @Override
+    public String toString() {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            return mapper.writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+            return "[Invalid JSON]";
+        }
+    }
+}

@@ -1,4 +1,4 @@
-package co.unobot.uno.chat;
+package co.unobot.uno.chat.models;
 
 /**
  * Created by shyam on 30/03/17.

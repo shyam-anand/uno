@@ -18,6 +18,9 @@ public class User {
     @JsonProperty("name")
     private String name;
 
+    @JsonProperty("fb_user_id")
+    private String fbUserId;
+
     @JsonIgnore
     private List<Business> interactedBusinesses;
 
@@ -43,5 +46,13 @@ public class User {
 
     public void setInteractedBusinesses(List<Business> interactedBusinesses) {
         this.interactedBusinesses = interactedBusinesses;
+    }
+
+    public String getFbUserId() {
+        return fbUserId;
+    }
+
+    public void setFbUserId(String fbUserId) {
+        this.fbUserId = fbUserId;
     }
 }

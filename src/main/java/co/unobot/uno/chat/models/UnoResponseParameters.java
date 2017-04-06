@@ -1,4 +1,4 @@
-package co.unobot.uno.chat;
+package co.unobot.uno.chat.models;
 
 import java.util.List;
 import java.util.Map;

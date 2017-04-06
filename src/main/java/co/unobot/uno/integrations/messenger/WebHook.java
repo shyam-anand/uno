@@ -1,7 +1,10 @@
 package co.unobot.uno.integrations.messenger;
 
+import co.unobot.uno.integrations.messenger.models.message.incoming.FBIncomingMessage;
+import co.unobot.uno.integrations.messenger.services.MessengerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +20,9 @@ public class WebHook {
 
     private static final Logger logger = LoggerFactory.getLogger(WebHook.class);
 
+    @Autowired
+    private MessengerService messengerService;
+
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity webHookPost(HttpServletRequest request,
                                       @RequestParam(value = "hub.mode") String hubMode,
@@ -26,8 +32,11 @@ public class WebHook {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity webHook(@RequestBody String requestBody) {
-        logger.info("POST - " + requestBody);
-        return new ResponseEntity<>(requestBody, HttpStatus.OK);
+    public ResponseEntity webHook(@RequestBody FBIncomingMessage fbMessage) {
+        logger.info("POST - " + fbMessage);
+
+        messengerService.receive(fbMessage);
+
+        return new ResponseEntity<>(fbMessage, HttpStatus.OK);
     }
 }
