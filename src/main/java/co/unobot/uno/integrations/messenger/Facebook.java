@@ -9,11 +9,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
+import org.springframework.http.*;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -77,8 +75,16 @@ public class Facebook {
 
         logger.info("Sending message to Facebook - {}", requestObjAsString);
 
-        HttpEntity<SendAPIResponse> responseEntity = restTemplate.exchange(MESSAGES_API, HttpMethod.POST, requestEntity, SendAPIResponse.class);
-        SendAPIResponse response = responseEntity.getBody();
-        return response.getMid();
+        try {
+            ResponseEntity<SendAPIResponse> responseEntity = restTemplate.exchange(MESSAGES_API, HttpMethod.POST, requestEntity, SendAPIResponse.class);
+            if (responseEntity.getStatusCode().is2xxSuccessful()) {
+                SendAPIResponse response = responseEntity.getBody();
+                return response.getMid();
+            } else {
+                logger.error("API failed with status: " + responseEntity.getStatusCode().name() + " " + responseEntity.getStatusCode().getReasonPhrase());
+            }
+        } catch (HttpClientErrorException e) {
+            logger.error(e.getMessage());
+        }
     }
 }
