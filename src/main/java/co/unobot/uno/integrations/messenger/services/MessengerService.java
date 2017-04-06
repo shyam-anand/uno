@@ -7,7 +7,6 @@ import co.unobot.uno.integrations.messenger.Facebook;
 import co.unobot.uno.integrations.messenger.models.FBUser;
 import co.unobot.uno.integrations.messenger.models.message.incoming.FBIncomingMessage;
 import co.unobot.uno.integrations.messenger.models.message.incoming.Message;
-import co.unobot.uno.integrations.messenger.models.message.incoming.MessageObject;
 import co.unobot.uno.integrations.messenger.models.message.outgoing.FBOutgoingMessage;
 import co.unobot.uno.integrations.messenger.models.message.outgoing.Recipient;
 import co.unobot.uno.models.User;
@@ -37,7 +36,7 @@ public class MessengerService {
 
         logger.info("Received message - {}", fbMessage);
 
-        if (fbMessage.getObject().equals(MessageObject.PAGE.name())) {
+        if (fbMessage.getObject().equals("page")) {
             fbMessage.getEntries().stream().forEach(entry -> {
                 String pageId = entry.getId();
                 long time = entry.getTime();
