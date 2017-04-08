@@ -1,6 +1,7 @@
 package co.unobot.uno.integrations.messenger;
 
 import co.unobot.uno.integrations.messenger.models.message.outgoing.FBOutgoingMessage;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -46,7 +47,10 @@ public class Facebook {
         @JsonProperty("mid")
         private String mid;
 
-        public SendAPIResponse() {
+        @JsonCreator
+        public SendAPIResponse(@JsonProperty("recipient_id") String recipientId, @JsonProperty("mid") String mid) {
+            this.recipientId = recipientId;
+            this.mid = mid;
         }
 
         public String getRecipientId() {
