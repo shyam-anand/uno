@@ -27,6 +27,7 @@ public class AIService {
 
     @Autowired
     public AIService(@Value("${api.key}") String apiKey) {
+        logger.info("Initialising api.ai with key '" + apiKey + "'");
         AIConfiguration aiConfiguration = new AIConfiguration(apiKey);
         aiDataService = new AIDataService(aiConfiguration);
     }
