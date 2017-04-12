@@ -33,10 +33,10 @@ public class Facebook {
     private static UriComponentsBuilder PAGES_API;
 
     @Autowired
-    public Facebook(@Value("${graph.uri}") String graphUri,
-                    @Value("${endpoint.messages}") String messagesApi,
-                    @Value("${endpoint.pages}") String pagesApi,
-                    @Value("${page.accessToken}") String pageAccessToken) throws URISyntaxException {
+    public Facebook(@Value("${fb.graph.uri}") String graphUri,
+                    @Value("${fb.endpoint.messages}") String messagesApi,
+                    @Value("${fb.endpoint.pages}") String pagesApi,
+                    @Value("${fb.page.accessToken}") String pageAccessToken) throws URISyntaxException {
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUri(new URI(graphUri));
         PAGES_API = uriBuilder.path(pagesApi);
         MESSAGES_API = UriComponentsBuilder.fromUri(new URI(graphUri)).path(messagesApi);

@@ -17,8 +17,8 @@ import org.springframework.stereotype.Service;
 /**
  * Created by shyam on 30/03/17
  */
-@Service
 @PropertySource("classpath:api.properties")
+@Service
 public class AIService {
 
     private AIDataService aiDataService;

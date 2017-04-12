@@ -52,8 +52,8 @@ public class Zomato {
     }
 
     @Autowired
-    public Zomato(@Value("${api.key}") String api_key,
-                  @Value("${api.url}") String api_url) {
+    public Zomato(@Value("${zomato.api.key}") String api_key,
+                  @Value("${zomato.api.url}") String api_url) {
         apiKey = api_key;
         apiUrl = api_url;
     }
