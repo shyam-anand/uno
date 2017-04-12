@@ -15,12 +15,13 @@ import org.springframework.web.bind.annotation.RestController;
  * Created by shyam on 30/03/17.
  */
 @RestController
+@RequestMapping("/chat")
 public class ChatController {
 
     @Autowired
     private UnoService uno;
 
-    @RequestMapping(value = "/chat", method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<?> getAIResponse(@RequestBody IncomingMessage incomingMessage) {
         UnoResponse response = uno.getResponse(incomingMessage);
         return new ResponseEntity<>(response, HttpStatus.OK);
