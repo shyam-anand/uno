@@ -1,5 +1,6 @@
 package co.unobot.uno.integrations.zomato.services;
 
+import co.unobot.uno.integrations.zomato.City;
 import co.unobot.uno.integrations.zomato.Zomato;
 import co.unobot.uno.integrations.zomato.ZomatoRequestFailedException;
 import co.unobot.uno.integrations.zomato.dailymenu.DailyMenu;
@@ -21,8 +22,17 @@ public class ZomatoService {
     @Autowired
     private Zomato zomato;
 
-    public Search search(String query) throws ZomatoRequestFailedException {
-        return zomato.search(query);
+    public Search search(String query, String cityName) throws ZomatoRequestFailedException {
+        City city;
+        switch (cityName.toLowerCase()) {
+            case "hyderabad":
+                city = City.HYDERABAD;
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid city name: " + cityName);
+
+        }
+        return zomato.search(query, city);
     }
 
     public Restaurant getRestaurant(String restaurantId) throws ZomatoRequestFailedException {

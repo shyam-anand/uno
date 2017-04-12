@@ -1,4 +1,4 @@
-package co.unobot.uno.integrations.messenger.models.message.incoming;
+package co.unobot.uno.integrations.facebook.models.message.incoming;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;

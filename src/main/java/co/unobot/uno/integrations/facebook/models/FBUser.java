@@ -1,4 +1,4 @@
-package co.unobot.uno.integrations.messenger.models;
+package co.unobot.uno.integrations.facebook.models;
 
 /**
  * Created by shyam on 02/04/17.

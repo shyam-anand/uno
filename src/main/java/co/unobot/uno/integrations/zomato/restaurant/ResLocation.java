@@ -1,13 +1,21 @@
 package co.unobot.uno.integrations.zomato.restaurant;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Created by shyam on 08/04/17.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ResLocation {
 
     private String address;
     private String locality;
     private String city;
+    @JsonProperty("city_id")
+    private String cityId;
     private double latitude;
     private double longitude;
     private String zipcode;
@@ -35,6 +43,14 @@ public class ResLocation {
 
     public void setCity(String city) {
         this.city = city;
+    }
+
+    public String getCityId() {
+        return cityId;
+    }
+
+    public void setCityId(String cityId) {
+        this.cityId = cityId;
     }
 
     public double getLatitude() {

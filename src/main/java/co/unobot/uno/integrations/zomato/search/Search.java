@@ -1,7 +1,6 @@
 package co.unobot.uno.integrations.zomato.search;
 
 import co.unobot.uno.integrations.zomato.ZomatoRequestType;
-import co.unobot.uno.integrations.zomato.restaurant.Restaurant;
 
 import java.util.List;
 
@@ -25,7 +24,7 @@ public class Search extends ZomatoRequestType {
      */
     private int results_shown;
 
-    private List<Restaurant> restaurants;
+    private List<RestaurantList> restaurants;
 
     public int getResults_found() {
         return results_found;
@@ -51,11 +50,11 @@ public class Search extends ZomatoRequestType {
         this.results_shown = results_shown;
     }
 
-    public List<Restaurant> getRestaurants() {
+    public List<RestaurantList> getRestaurants() {
         return restaurants;
     }
 
-    public void setRestaurants(List<Restaurant> restaurants) {
+    public void setRestaurants(List<RestaurantList> restaurants) {
         this.restaurants = restaurants;
     }
 }

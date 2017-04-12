@@ -1,4 +1,4 @@
-package co.unobot.uno.integrations.messenger.models.message.incoming;
+package co.unobot.uno.integrations.facebook.models.message.incoming;
 
 /**
  * Created by shyam on 02/04/17.

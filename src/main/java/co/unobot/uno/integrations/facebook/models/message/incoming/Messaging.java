@@ -1,6 +1,6 @@
-package co.unobot.uno.integrations.messenger.models.message.incoming;
+package co.unobot.uno.integrations.facebook.models.message.incoming;
 
-import co.unobot.uno.integrations.messenger.models.FBUser;
+import co.unobot.uno.integrations.facebook.models.FBUser;
 
 /**
  * Created by shyam on 02/04/17.

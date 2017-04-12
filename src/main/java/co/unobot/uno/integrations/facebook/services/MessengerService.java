@@ -1,14 +1,14 @@
-package co.unobot.uno.integrations.messenger.services;
+package co.unobot.uno.integrations.facebook.services;
 
 import co.unobot.uno.chat.models.IncomingMessage;
 import co.unobot.uno.chat.models.UnoResponse;
 import co.unobot.uno.chat.services.UnoService;
-import co.unobot.uno.integrations.messenger.Facebook;
-import co.unobot.uno.integrations.messenger.FacebookApiFailedException;
-import co.unobot.uno.integrations.messenger.models.FBUser;
-import co.unobot.uno.integrations.messenger.models.message.incoming.FBIncomingMessage;
-import co.unobot.uno.integrations.messenger.models.message.incoming.Message;
-import co.unobot.uno.integrations.messenger.models.message.outgoing.FBOutgoingMessage;
+import co.unobot.uno.integrations.facebook.Facebook;
+import co.unobot.uno.integrations.facebook.graphapi.GraphApiFailureException;
+import co.unobot.uno.integrations.facebook.models.FBUser;
+import co.unobot.uno.integrations.facebook.models.message.incoming.FBIncomingMessage;
+import co.unobot.uno.integrations.facebook.models.message.incoming.Message;
+import co.unobot.uno.integrations.facebook.models.message.outgoing.FBOutgoingMessage;
 import co.unobot.uno.models.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,7 +78,7 @@ public class MessengerService {
 
         try {
             facebook.sendMessage(outgoingMessage);
-        } catch (FacebookApiFailedException e) {
+        } catch (GraphApiFailureException e) {
             logger.error("Message sending failed: " + e.getMessage());
         }
     }

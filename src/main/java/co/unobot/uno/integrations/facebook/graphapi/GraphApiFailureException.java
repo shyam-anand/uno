@@ -1,17 +1,17 @@
-package co.unobot.uno.integrations.zomato;
+package co.unobot.uno.integrations.facebook.graphapi;
 
 import org.springframework.http.HttpStatus;
 
 /**
- * Created by shyam on 08/04/17.
+ * Created by shyam on 07/04/17.
  */
-public class ZomatoRequestFailedException extends Exception {
+public class GraphApiFailureException extends Exception {
 
     private HttpStatus httpStatus;
     private String message;
 
-    public ZomatoRequestFailedException(HttpStatus httpStatus, String message) {
-        super("Zomato API failed with " + httpStatus.value() + " " + httpStatus.getReasonPhrase() + " - " + message);
+    public GraphApiFailureException(HttpStatus httpStatus, String message) {
+        super(message);
         this.httpStatus = httpStatus;
         this.message = message;
     }

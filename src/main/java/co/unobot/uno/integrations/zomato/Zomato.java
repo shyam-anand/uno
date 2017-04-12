@@ -3,19 +3,21 @@ package co.unobot.uno.integrations.zomato;
 import co.unobot.uno.integrations.zomato.dailymenu.DailyMenu;
 import co.unobot.uno.integrations.zomato.restaurant.Restaurant;
 import co.unobot.uno.integrations.zomato.search.Search;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,6 +28,8 @@ import java.util.Map;
 @PropertySource("classpath:zomato.properties")
 @Component
 public class Zomato {
+
+    private final static Logger logger = LoggerFactory.getLogger(Zomato.class);
 
     private static String apiUrl;
     private static String apiKey;
@@ -64,13 +68,24 @@ public class Zomato {
         return zomatoRequest.callApi();
     }
 
-    public Search search(String query) throws ZomatoRequestFailedException {
-        ZomatoRequest<Search> zomatoRequest = new ZomatoRequest<>(Search.class, EndPoint.SEARCH);
+    public Search search(String query, City city) throws ZomatoRequestFailedException {
+        ZomatoRequest<String> zomatoRequest = new ZomatoRequest<>(String.class, EndPoint.SEARCH);
         zomatoRequest.setParam("q", query);
-        return zomatoRequest.callApi();
+        zomatoRequest.setParam("entity_type", "city");
+        zomatoRequest.setParam("entity_id", city.value());
+
+        String response = zomatoRequest.callApi();
+        logger.info(response);
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            return mapper.readValue(response, Search.class);
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+            return null;
+        }
     }
 
-    private class ZomatoRequest<T extends ZomatoRequestType> {
+    private class ZomatoRequest<T> {
 
         final Class<T> responseType;
         final String endPoint;
@@ -117,11 +132,23 @@ public class Zomato {
             headers.add("user_key", apiKey);
 
             HttpEntity<?> requestEntity = new HttpEntity<>(headers);
-            ResponseEntity<T> responseEntity = restTemplate.exchange(url, HttpMethod.GET, requestEntity, responseType);
-            if (responseEntity.getStatusCode().is2xxSuccessful())
-                return responseEntity.getBody();
-            else
-                throw new ZomatoRequestFailedException(responseEntity.getStatusCode());
+            try {
+                ResponseEntity<T> responseEntity = restTemplate.exchange(url, HttpMethod.GET, requestEntity, responseType);
+                if (responseEntity.getStatusCode().is2xxSuccessful())
+                    return responseEntity.getBody();
+                else
+                    throw new ZomatoRequestFailedException(responseEntity.getStatusCode(), "Request failed");
+            } catch (HttpClientErrorException e) {
+                logger.error(e.getStatusCode().value() + " " + e.getStatusCode().getReasonPhrase() + "\n" + e.getResponseBodyAsString());
+                ObjectMapper mapper = new ObjectMapper();
+                try {
+                    ZomatoErrorResponse zomatoErrorResponse = mapper.readValue(e.getResponseBodyAsString(), ZomatoErrorResponse.class);
+                    throw new ZomatoRequestFailedException(e.getStatusCode(), zomatoErrorResponse.getMessage());
+                } catch (IOException ex) {
+                    logger.error("Error parsing response from Zomato: " + e.getResponseBodyAsString());
+                    throw new ZomatoRequestFailedException(HttpStatus.INTERNAL_SERVER_ERROR, "Invalid response from Zomato: " + e.getResponseBodyAsString());
+                }
+            }
         }
     }
 

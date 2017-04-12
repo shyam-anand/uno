@@ -1,15 +1,17 @@
 package co.unobot.uno.integrations.zomato.restaurant;
 
 import co.unobot.uno.integrations.zomato.ZomatoRequestType;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Created by shyam on 08/04/17.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Restaurant extends ZomatoRequestType {
-    private int id;
+    private String id;
     private String name;
     private String url;
     private ResLocation location;
@@ -62,11 +64,11 @@ public class Restaurant extends ZomatoRequestType {
     //photos (Array[Photo], optional): [Partner access] List of restaurant photos ,
     //all_reviews (Array[Review], optional): [Partner access] List of restaurant reviews
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -174,7 +176,7 @@ public class Restaurant extends ZomatoRequestType {
         this.hasOnlineDelivery = hasOnlineDelivery;
     }
 
-    public boolean is_delivering_now() {
+    public boolean isDeliveringNow() {
         return isDeliveringNow;
     }
 

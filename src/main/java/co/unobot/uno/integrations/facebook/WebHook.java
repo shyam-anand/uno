@@ -1,7 +1,7 @@
-package co.unobot.uno.integrations.messenger;
+package co.unobot.uno.integrations.facebook;
 
-import co.unobot.uno.integrations.messenger.models.message.incoming.FBIncomingMessage;
-import co.unobot.uno.integrations.messenger.services.MessengerService;
+import co.unobot.uno.integrations.facebook.models.message.incoming.FBIncomingMessage;
+import co.unobot.uno.integrations.facebook.services.MessengerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
