@@ -1,0 +1,4 @@
+#!/bin/bash
+git pull origin master
+cp /home/ubuntu/uno-resources/*.properties /home/ubuntu/uno/src/main/resources/
+mvn spring-boot:run -Djava.security.egd=/dev/./urandom
