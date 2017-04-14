@@ -7,6 +7,7 @@ class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            fbLoginStatus: false,
             FB: null
         }
     }
@@ -22,6 +23,9 @@ class App extends React.Component {
 
             FB.getLoginStatus(function (response) {
                 console.log("FB login status: " + response.status);
+                if (response.status == 'connected') {
+                    this.setState({fbLoginStatus: true});
+                }
             });
         };
 
@@ -40,9 +44,19 @@ class App extends React.Component {
     componentDidMount() {
     }
 
+    fbLogin() {
+        FB.login(function (response) {
+            console.log("Login response - " + response);
+        });
+    }
+
     render() {
         return (
-            <h1>This is React</h1>
+            <div>{
+                this.state.fbLoginStatus === false ?
+                    <a className="btn blue-darken-4" onClick={this.fbLogin}>Login to Facebook</a> :
+                    <span className="strong">'You are logged in'</span>
+            }</div>
         )
     }
 }
