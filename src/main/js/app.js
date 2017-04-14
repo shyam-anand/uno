@@ -24,7 +24,7 @@ class App extends React.Component {
             FB.getLoginStatus(function (response) {
                 console.log("FB login status: " + response.status);
                 if (response.status == 'connected') {
-                    this.setState({fbLoginStatus: true});
+                    this.state.fbLoginStatus = true;
                 }
             });
         };
