@@ -23,9 +23,9 @@ class App extends React.Component {
         });
         //FB.AppEvents.logPageView();
 
-        this.FB.getLoginStatus(function (response) {
+        this.state.fbLoginStatus = this.FB.getLoginStatus(function (response) {
             console.log("FB login status: " + response.status);
-            this.state.fbLoginStatus = response.status == 'connected';
+            return response.status == 'connected';
         });
 
 
