@@ -16,19 +16,17 @@ class App extends React.Component {
     }
 
     componentWillMount() {
-
-
         this.FB.init({
-                appId: '249750865488314',
+            appId: '249750865488314',
             xfbml: false,
-                version: 'v2.8'
-            });
+            version: 'v2.8'
+        });
         //FB.AppEvents.logPageView();
 
         this.FB.getLoginStatus(function (response) {
-                console.log("FB login status: " + response.status);
+            console.log("FB login status: " + response.status);
             this.state.fbLoginStatus = response.status == 'connected';
-            });
+        });
 
 
         //(function (d, s, id) {
@@ -72,7 +70,7 @@ class App extends React.Component {
     }
 
     fbLogin() {
-        FB.login(function (response) {
+        this.FB.login(function (response) {
             console.log("Login response - " + response, status);
             if (response.status == 'connected') {
                 this.state.fbLoginStatus = true;
