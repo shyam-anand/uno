@@ -40,7 +40,7 @@ public class UnoResponse {
         score = result.getScore();
         message = result.getFulfillment().getSpeech();
 
-        if (!action.equals("smalltalk.greetings") && !result.getContexts().isEmpty()) {
+        if (!action.equals("smalltalk.greetings") && result.getContexts() != null && !result.getContexts().isEmpty()) {
             unoResponseParametersList = result.getContexts().stream().map(context -> {
                 UnoResponseParameters unoResponseParameters = new UnoResponseParameters();
                 Map<String, JsonElement> contextParams = context.getParameters();
