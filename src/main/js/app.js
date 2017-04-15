@@ -6,48 +6,78 @@ class App extends React.Component {
 
     constructor(props) {
         super(props);
+
+        this.FB = props.FB;
+
         this.state = {
             fbLoginStatus: false,
-            FB: null
+            message: ''
         }
     }
 
     componentWillMount() {
-        window.fbAsyncInit = function () {
-            FB.init({
+
+
+        this.FB.init({
                 appId: '249750865488314',
-                xfbml: true,
+            xfbml: false,
                 version: 'v2.8'
             });
-            FB.AppEvents.logPageView();
+        //FB.AppEvents.logPageView();
 
-            FB.getLoginStatus(function (response) {
+        this.FB.getLoginStatus(function (response) {
                 console.log("FB login status: " + response.status);
-                if (response.status == 'connected') {
-                    this.state.fbLoginStatus = true;
-                }
+            this.state.fbLoginStatus = response.status == 'connected';
             });
-        };
 
-        (function (d, s, id) {
-            var js, fjs = d.getElementsByTagName(s)[0];
-            if (d.getElementById(id)) {
-                return;
-            }
-            js = d.createElement(s);
-            js.id = id;
-            js.src = "//connect.facebook.net/en_US/sdk.js";
-            fjs.parentNode.insertBefore(js, fjs);
-        }(document, 'script', 'facebook-jssdk'));
+
+        //(function (d, s, id) {
+        //    var js, fjs = d.getElementsByTagName(s)[0];
+        //    if (d.getElementById(id)) {
+        //        return;
+        //    }
+        //    js = d.createElement(s);
+        //    js.id = id;
+        //    js.src = "//connect.facebook.net/en_US/sdk.js";
+        //    fjs.parentNode.insertBefore(js, fjs);
+        //}(document, 'script', 'facebook-jssdk'));
     }
 
     componentDidMount() {
+
+        this.FB.Event.subscribe('auth.logout',
+            this.onLogout.bind(this));
+        this.FB.Event.subscribe('auth.statusChange',
+            this.onStatusChange.bind(this));
+    }
+
+    onStatusChange(response) {
+        console.log(response);
+        var self = this;
+
+        if (response.status === "connected") {
+            this.FB.api('/me', function (response) {
+                var message = "Welcome " + response.name;
+                self.setState({
+                    message: message
+                });
+            })
+        }
+    }
+
+    onLogout(response) {
+        this.setState({
+            message: ""
+        });
     }
 
     fbLogin() {
         FB.login(function (response) {
-            console.log("Login response - " + response);
-        });
+            console.log("Login response - " + response, status);
+            if (response.status == 'connected') {
+                this.state.fbLoginStatus = true;
+            }
+        }, {scope: 'public_profile,email'});
     }
 
     render() {
@@ -55,10 +85,10 @@ class App extends React.Component {
             <div>{
                 this.state.fbLoginStatus === false ?
                     <a className="btn blue-darken-4" onClick={this.fbLogin}>Login to Facebook</a> :
-                    <span className="strong">'You are logged in'</span>
+                    <span className="strong">{this.state.message}</span>
             }</div>
         )
     }
 }
 
-ReactDOM.render(<App/>, document.getElementById("react-app"));
+ReactDOM.render(<App fb={FB}/>, document.getElementById("react-app"));
