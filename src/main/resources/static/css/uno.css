@@ -1,3 +1,29 @@
 body {
-    margin: 16px;
+
+}
+
+.header-div {
+    height: 50px;
+}
+
+.logo-sm {
+    width: 100px;
+    margin-left: 16px;
+    margin-top: 8px;
+}
+
+.left-pane {
+    height: 100vh;
+    border-right: solid thin #37474f;
+}
+
+.half-width {
+    width: 50%;
+}
+
+.links-list li:hover {
+    cursor: pointer;
+!important;
+    background: #E3E3E3;
+!important;
 }
