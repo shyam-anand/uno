@@ -12,6 +12,11 @@ body {
     margin-top: 8px;
 }
 
+.logo-text {
+    color: #4e3ce2;
+    font-weight: 500;
+    font-size: 32px;
+}
 .left-pane {
     height: 100vh;
 }

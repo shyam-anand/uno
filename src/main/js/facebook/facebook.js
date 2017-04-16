@@ -77,6 +77,7 @@ export default class Facebook extends React.Component {
         this.setState({
             name: response.name
         });
+        this.props.setUsername(this.state.name);
         Uno.fbLogin({
             id: this.state.uid,
             name: this.state.name
@@ -141,32 +142,25 @@ export default class Facebook extends React.Component {
                     ?
                     <div className="container center valign-wrapper full-height">
                         <div className="center-block">
-                            <h2 className="thin">Hello</h2>
-
+                            <h2 className="thin">Hello.</h2>
                             <h4 className="thin">Let's build bots!</h4>
-
-                            <p className="grey-text text-lighten-2">Or, make humans obsolete, to put it bluntly.</p>
                             <a className="btn blue darken-4" onClick={this.fbLogin}>Sign in with Facebook</a>
                         </div>
                     </div>
                     :
                     <div className="section">
                         <div className="row">
-                            <div className="col s2 offset-s10">
-                                <p className="center">
-                                    <span className="grey-text text-darken-2 bold">{this.state.name}</span>
-                                </p>
-                            </div>
-                        </div>
-                        <div className="row">
                             <div className="col s12">
                                 {
                                     this.state.hasPagesPerms == true ?
                                         <Pages fb={this.FB} uid={this.state.uid}/> :
-                                        <p className="center"><a className="btn blue darken-4"
-                                                                 onClick={this.getPermissions}>
-                                            Give permission to manage pages
-                                        </a></p>
+                                        <div className="valign-wrapper">
+                                            <p className="center">
+                                                <a className="btn blue darken-4" onClick={this.getPermissions}>
+                                                    Give permission to manage pages
+                                                </a>
+                                            </p>
+                                        </div>
                                 }
                             </div>
                         </div>
