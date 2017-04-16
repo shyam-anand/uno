@@ -13,7 +13,9 @@ class App extends React.Component {
         return (
             <div>
                 <div className="header-div z-depth-1">
-                    <div className="left"><img src="img/Uno.png" className="logo-sm"/></div>
+                    <div className="left">
+                        <img src="./img/Uno.png" className="logo-sm"/>
+                    </div>
                 </div>
                 <Facebook fb={this.props.fb}/>
             </div>
