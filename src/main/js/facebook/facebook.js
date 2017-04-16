@@ -12,6 +12,11 @@ export default class Facebook extends React.Component {
         this.FB = props.fb;
         this.hasPagesPerms = false;
 
+        //Test
+        //this.appId = '253910318405702';
+        //Prod
+        this.appId = '249750865488314';
+
         this.state = {
             fbLoginStatus: false,
             accessToken: '',
@@ -27,7 +32,7 @@ export default class Facebook extends React.Component {
 
     componentWillMount() {
         this.FB.init({
-            appId: '249750865488314',
+            appId: this.appId,
             xfbml: false,
             version: 'v2.8'
         });
