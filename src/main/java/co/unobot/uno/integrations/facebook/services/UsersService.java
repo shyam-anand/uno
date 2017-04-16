@@ -25,9 +25,11 @@ public class UsersService {
     public FBUser login(FBUser fbUser) {
         FBUser user = userRepo.findOne(fbUser.getId());
         if (user == null) {
-            user = save(fbUser);
+            user = new FBUser();
+            user.setId(fbUser.getId());
         }
-        return user;
+        user.setName(fbUser.getName());
+        return save(user);
     }
 
     private FBUser save(FBUser user) {

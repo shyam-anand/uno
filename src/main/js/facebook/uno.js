@@ -1,22 +1,30 @@
+import $ from 'jquery';
+
 export default class Uno {
 
-    constructor() {
-        this.host = "http://localhost:1202";
-    }
-
-    fbLogin(user, callback) {
+    static fbLogin(user, callback) {
         console.log(user, "Uno fbLogin");
-        this.api(`facebook/users/login`, 'POST', user, callback);
+        Uno.api(`facebook/users/login`, 'POST', user, callback);
     }
 
-    fbSubscribeToPage(page, callback) {
+    static fbSubscribeToPage(page, callback) {
         console.log(page, "Uno fbSubscribeToPage");
-        this.api(`facebook/pages/`, 'POST', page, callback);
+        Uno.api(`facebook/pages/`, 'POST', page, callback);
     }
 
-    api(endpoint, method, data, callback) {
+    static api(endpoint, method, data, callback) {
+
+        if (arguments.length == 2) {
+            callback = method;
+            method = 'get';
+        } else if (arguments.length == 3) {
+            callback = data;
+            data = null;
+        }
+
+        console.log(endpoint, "Uno API request");
         $.ajax({
-            url: `${this.host}/${endpoint}`,
+            url: endpoint,
             type: method,
             data: JSON.stringify(data),
             contentType: 'application/json',

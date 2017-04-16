@@ -53,6 +53,8 @@ public class MessengerService {
                     UnoResponse response;
                     user = messaging.getSender();
                     page = pages.get(messaging.getRecipient().getId());
+
+
                     if (messaging.getMessage() != null) {
                         Message message = messaging.getMessage();
 

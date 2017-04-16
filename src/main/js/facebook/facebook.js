@@ -8,14 +8,22 @@ export default class Facebook extends React.Component {
     constructor(props) {
         super(props);
 
-        this.uno = new Uno();
         this.FB = props.fb;
         this.hasPagesPerms = false;
 
-        //Test
-        //this.appId = '253910318405702';
-        //Prod
-        this.appId = '249750865488314';
+        Uno.api("/facebook/config", function (response) {
+            console.log(response, "FB config");
+            if (response.success) {
+                this.appId = response.data.appId;
+                this.version = response.data.version;
+
+                this.FB.init({
+                    appId: this.appId,
+                    xfbml: false,
+                    version: this.version
+                });
+            }
+        }.bind(this));
 
         this.state = {
             fbLoginStatus: false,
@@ -31,11 +39,6 @@ export default class Facebook extends React.Component {
     }
 
     componentWillMount() {
-        this.FB.init({
-            appId: this.appId,
-            xfbml: false,
-            version: 'v2.8'
-        });
         //FB.AppEvents.logPageView();
 
         this.FB.getLoginStatus(this.onStatusChange);
@@ -48,7 +51,6 @@ export default class Facebook extends React.Component {
 
     onStatusChange(response) {
         console.log(response, "onStatusChange");
-        var self = this;
 
         if (response.status === "connected") {
             this.FB.api('/me', this.userProfile.bind(this));
@@ -75,7 +77,7 @@ export default class Facebook extends React.Component {
         this.setState({
             name: response.name
         });
-        this.uno.fbLogin({
+        Uno.fbLogin({
             id: this.state.uid,
             name: this.state.name
         }, function (response) {
@@ -136,30 +138,39 @@ export default class Facebook extends React.Component {
         return (
             <div>{
                 this.state.fbLoginStatus === false
-                    ? <div className="container ">
-                    <h2 className="thin">Hello! Get started by logging in using Facebook.</h2>
+                    ?
+                    <div className="container center valign-wrapper full-height">
+                        <div className="center-block">
+                            <h2 className="thin">Hello</h2>
 
-                    <p className="center">
-                        <a className="btn blue darken-4" onClick={this.fbLogin}>Login to Facebook</a>
-                    </p>
-                </div>
-                    : <div className="row">
-                    <div className="col s2 left-pane">
-                        <p className="center">
-                            <span className="grey-text text-darken-2 bold">{this.state.name}</span>
-                        </p>
+                            <h4 className="thin">Let's build bots!</h4>
+
+                            <p className="grey-text text-lighten-2">Or, make humans obsolete, to put it bluntly.</p>
+                            <a className="btn blue darken-4" onClick={this.fbLogin}>Sign in with Facebook</a>
+                        </div>
                     </div>
-                    <div className="col s10">
-                        {
-                            this.state.hasPagesPerms == true
-                                ? <Pages fb={this.FB} uid={this.state.uid}/>
-                                : <p>
-                                <a className="btn blue darken-4" onClick={this.getPermissions}>Give permission to manage
-                                    pages</a>
-                            </p>
-                        }
+                    :
+                    <div className="section">
+                        <div className="row">
+                            <div className="col s2 offset-s10">
+                                <p className="center">
+                                    <span className="grey-text text-darken-2 bold">{this.state.name}</span>
+                                </p>
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="col s12">
+                                {
+                                    this.state.hasPagesPerms == true ?
+                                        <Pages fb={this.FB} uid={this.state.uid}/> :
+                                        <p className="center"><a className="btn blue darken-4"
+                                                                 onClick={this.getPermissions}>
+                                            Give permission to manage pages
+                                        </a></p>
+                                }
+                            </div>
+                        </div>
                     </div>
-                </div>
             }</div>
         )
     }

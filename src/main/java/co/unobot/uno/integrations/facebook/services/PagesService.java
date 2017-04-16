@@ -7,6 +7,9 @@ import co.unobot.uno.integrations.facebook.repositories.FBUserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * Created by shyam on 09/04/17.
  */
@@ -32,5 +35,10 @@ public class PagesService {
 
     private void save(FBPage page) {
         pagesRepo.save(page);
+    }
+
+    public List<String> subscriptions(String userId) {
+        List<FBPage> pages = pagesRepo.findByUserId(userId);
+        return pages.stream().map(FBPage::getId).collect(Collectors.toList());
     }
 }
