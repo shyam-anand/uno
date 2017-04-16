@@ -27,7 +27,7 @@ export default class Facebook extends React.Component {
 
     componentWillMount() {
         this.FB.init({
-            appId: '253910318405702',
+            appId: '249750865488314',
             xfbml: false,
             version: 'v2.8'
         });
