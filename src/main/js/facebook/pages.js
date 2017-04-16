@@ -1,10 +1,12 @@
 const React = require('react');
 
+import Uno from './uno';
 class PageList extends React.Component {
 
     constructor(props) {
         super(props);
         this.page = props.page;
+
         this.onListItemClicked = this.onListItemClicked.bind(this);
     }
 
@@ -28,6 +30,7 @@ export default class Pages extends React.Component {
         super(props);
 
         this.FB = props.fb;
+        this.uno = new Uno();
         this.uid = props.uid;
         this.state = {
             pages: []
@@ -40,17 +43,30 @@ export default class Pages extends React.Component {
 
     pageSelected(page) {
         console.log(page, "page selected");
-        this.setState.selectedPage = page.id;
+        this.setState({selectedPage: page});
 
-        this.FB.api(`/${page.id}/subscribed_apps`, 'post', {access_token: page.access_token}, function (response) {
-            if (!response || response.error) {
-                console.error(response.error.message, "subscribed_apps error");
-            } else {
-                console.log(response, "Subscribe to Page");
-            }
-        })
+        this.FB.api(
+            `/${page.id}/subscribed_apps`,
+            'post',
+            {access_token: page.access_token},
+            this.pageSubscribed.bind(this));
     }
 
+    pageSubscribed(response) {
+        if (!response || response.error) {
+            console.error(response.error.message, "subscribed_apps error");
+        } else {
+            this.uno.fbSubscribeToPage({
+                id: this.state.selectedPage.id,
+                name: this.state.selectedPage.name,
+                access_token: this.state.selectedPage.access_token,
+                user: {
+                    id: this.uid
+                }
+            });
+            console.log(response, "Subscribe to Page");
+        }
+    }
     componentWillMount() {
         var accountsApi = `/${this.uid}/accounts`;
         this.FB.api(accountsApi, this.getPages)
@@ -65,11 +81,9 @@ export default class Pages extends React.Component {
         } else if (response.error) {
             console.error(response.error);
         }
-        console.log(this.state.pages, "pages");
     }
 
     render() {
-        console.log(this.state.pages, "Pages.render");
         return (
             <div>
                 <h5 className="light">Select the page to be connected</h5>

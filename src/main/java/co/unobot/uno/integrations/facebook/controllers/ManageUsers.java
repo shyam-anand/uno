@@ -1,7 +1,7 @@
 package co.unobot.uno.integrations.facebook.controllers;
 
-import co.unobot.uno.integrations.facebook.models.FBPage;
-import co.unobot.uno.integrations.facebook.services.PagesService;
+import co.unobot.uno.integrations.facebook.models.FBUser;
+import co.unobot.uno.integrations.facebook.services.UsersService;
 import co.unobot.uno.models.dto.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,20 +13,22 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Created by shyam on 09/04/17.
+ * Created by shyam on 16/04/17.
  */
 @RestController
-@RequestMapping("/facebook/pages")
-public class ManagePages {
+@RequestMapping("/facebook/users")
+public class ManageUsers {
 
     @Autowired
-    private PagesService pages;
+    private UsersService users;
 
     @RequestMapping(value = "/", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity subscribe(@RequestBody FBPage page) {
+    public ResponseEntity<Response> create(@RequestBody FBUser fbUser) {
+        return new ResponseEntity<>(new Response(true, users.create(fbUser)), HttpStatus.OK);
+    }
 
-        pages.subscribe(page);
-        return new ResponseEntity<>(new Response(true, "Subscribed to " + page.getId()), HttpStatus.OK);
-
+    @RequestMapping(value = "/login", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity login(@RequestBody FBUser fbUser) {
+        return new ResponseEntity<>(new Response(true, users.login(fbUser)), HttpStatus.OK);
     }
 }

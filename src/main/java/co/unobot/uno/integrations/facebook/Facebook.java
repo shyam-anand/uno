@@ -17,8 +17,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 /**
- * Wrapper class for Facebook APIs. This class can be extended by services
- * that need to use Facebook APIs.
+ * Wrapper class for Facebook APIs.
  *
  * @author Shyam Anand
  */
@@ -28,30 +27,30 @@ public class Facebook {
 
     private static final Logger logger = LoggerFactory.getLogger(Facebook.class);
 
-    private static String PAGE_ACCESS_TOKEN;
+    private static String APP_ID;
     private static UriComponentsBuilder MESSAGES_API;
     private static UriComponentsBuilder PAGES_API;
 
     @Autowired
-    public Facebook(@Value("${fb.graph.uri}") String graphUri,
+    public Facebook(@Value("${app.id}") String appId,
+                    @Value("${fb.graph.uri}") String graphUri,
                     @Value("${fb.endpoint.messages}") String messagesApi,
-                    @Value("${fb.endpoint.pages}") String pagesApi,
-                    @Value("${fb.page.accessToken}") String pageAccessToken) throws URISyntaxException {
+                    @Value("${fb.endpoint.pages}") String pagesApi) throws URISyntaxException {
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUri(new URI(graphUri));
+        APP_ID = appId;
         PAGES_API = uriBuilder.path(pagesApi);
         MESSAGES_API = UriComponentsBuilder.fromUri(new URI(graphUri)).path(messagesApi);
-        PAGE_ACCESS_TOKEN = pageAccessToken;
     }
 
-    public SendAPIResponse sendMessage(FBOutgoingMessage message) throws GraphApiFailureException {
-        GraphAPIRequest<SendAPIResponse> request = new GraphAPIRequest<>(MESSAGES_API.build().encode().toUri(), PAGE_ACCESS_TOKEN, SendAPIResponse.class);
+    public SendAPIResponse sendMessage(FBOutgoingMessage message, String pageAccessToken) throws GraphApiFailureException {
+        GraphAPIRequest<SendAPIResponse> request = new GraphAPIRequest<>(MESSAGES_API.build().encode().toUri(), pageAccessToken, SendAPIResponse.class);
         return request.execute(message);
     }
 
-    public SimpleGraphResponse addSubscription(String pageId) throws GraphApiFailureException {
+    public SimpleGraphResponse addSubscription(String pageId, String accessToken) throws GraphApiFailureException {
         URI pagesUri = PAGES_API.buildAndExpand(pageId).toUri();
         logger.info("Sending subscription request - " + pagesUri.toString());
-        GraphAPIRequest<SimpleGraphResponse> request = new GraphAPIRequest<>(pagesUri, PAGE_ACCESS_TOKEN, SimpleGraphResponse.class);
+        GraphAPIRequest<SimpleGraphResponse> request = new GraphAPIRequest<>(pagesUri, accessToken, SimpleGraphResponse.class);
         return request.execute(null);
     }
 }

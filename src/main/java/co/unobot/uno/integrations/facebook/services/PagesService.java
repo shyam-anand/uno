@@ -1,7 +1,9 @@
 package co.unobot.uno.integrations.facebook.services;
 
 import co.unobot.uno.integrations.facebook.Facebook;
-import co.unobot.uno.integrations.facebook.graphapi.GraphApiFailureException;
+import co.unobot.uno.integrations.facebook.models.FBPage;
+import co.unobot.uno.integrations.facebook.repositories.FBPagesRepo;
+import co.unobot.uno.integrations.facebook.repositories.FBUserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +16,21 @@ public class PagesService {
     @Autowired
     private Facebook facebook;
 
-    public boolean addPage(String pageId) throws GraphApiFailureException {
-        return facebook.addSubscription(pageId).isSuccess();
+    @Autowired
+    private FBPagesRepo pagesRepo;
+
+    @Autowired
+    private FBUserRepo userRepo;
+
+    public FBPage get(String id) {
+        return pagesRepo.findOne(id);
+    }
+
+    public void subscribe(FBPage page) {
+        save(page);
+    }
+
+    private void save(FBPage page) {
+        pagesRepo.save(page);
     }
 }

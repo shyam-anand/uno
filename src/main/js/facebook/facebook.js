@@ -1,5 +1,6 @@
 const React = require('react');
 
+import Uno from './uno';
 import Pages from './pages.js';
 
 export default class Facebook extends React.Component {
@@ -7,6 +8,7 @@ export default class Facebook extends React.Component {
     constructor(props) {
         super(props);
 
+        this.uno = new Uno();
         this.FB = props.fb;
         this.hasPagesPerms = false;
 
@@ -25,7 +27,7 @@ export default class Facebook extends React.Component {
 
     componentWillMount() {
         this.FB.init({
-            appId: '249750865488314',
+            appId: '253910318405702',
             xfbml: false,
             version: 'v2.8'
         });
@@ -44,13 +46,7 @@ export default class Facebook extends React.Component {
         var self = this;
 
         if (response.status === "connected") {
-            this.FB.api('/me', function (response) {
-                console.log(response, "/me");
-
-                self.setState({
-                    name: response.name
-                });
-            });
+            this.FB.api('/me', this.userProfile.bind(this));
 
             this.setState({
                 fbLoginStatus: true,
@@ -67,6 +63,19 @@ export default class Facebook extends React.Component {
                 fbLoginStatus: false
             });
         }
+    }
+
+    userProfile(response) {
+        console.log(response, "/me");
+        this.setState({
+            name: response.name
+        });
+        this.uno.fbLogin({
+            id: this.state.uid,
+            name: this.state.name
+        }, function (response) {
+            console.log(response, "Uno fbLogin response");
+        });
     }
 
     pagesPerms(response) {

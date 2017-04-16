@@ -5,6 +5,7 @@ import co.unobot.uno.chat.models.UnoResponse;
 import co.unobot.uno.chat.services.UnoService;
 import co.unobot.uno.integrations.facebook.Facebook;
 import co.unobot.uno.integrations.facebook.graphapi.GraphApiFailureException;
+import co.unobot.uno.integrations.facebook.models.FBPage;
 import co.unobot.uno.integrations.facebook.models.FBUser;
 import co.unobot.uno.integrations.facebook.models.message.incoming.FBIncomingMessage;
 import co.unobot.uno.integrations.facebook.models.message.incoming.Message;
@@ -26,10 +27,15 @@ public class MessengerService {
 
     @Autowired
     private Facebook facebook;
+
     @Autowired
     private UnoService uno;
 
-    private FBUser sender;
+    @Autowired
+    private PagesService pages;
+
+    private FBUser user;
+    private FBPage page;
 
     @Async
     public void receive(FBIncomingMessage fbMessage) {
@@ -45,7 +51,8 @@ public class MessengerService {
 
                 entry.getMessaging().stream().forEach(messaging -> {
                     UnoResponse response;
-                    sender = messaging.getSender();
+                    user = messaging.getSender();
+                    page = pages.get(messaging.getRecipient().getId());
                     if (messaging.getMessage() != null) {
                         Message message = messaging.getMessage();
 
@@ -56,10 +63,10 @@ public class MessengerService {
                             IncomingMessage unoMessage = new IncomingMessage();
                             unoMessage.setMessage(message.getText());
                             User user = new User();
-                            user.setId(sender.getId());
+                            user.setId(this.user.getId());
                             unoMessage.setUser(user);
                             response = uno.getResponse(unoMessage);
-                            send(sender, response.getMessage());
+                            send(response.getMessage());
                         }
                         if (message.getAttachments() != null) {
                             logger.info("Attachments -- ");
@@ -73,11 +80,11 @@ public class MessengerService {
         }
     }
 
-    public void send(FBUser user, String messageText) {
+    public void send(String messageText) {
         FBOutgoingMessage outgoingMessage = new FBOutgoingMessage(user.getId(), messageText);
 
         try {
-            facebook.sendMessage(outgoingMessage);
+            facebook.sendMessage(outgoingMessage, page.getAccessToken());
         } catch (GraphApiFailureException e) {
             logger.error("Message sending failed: " + e.getMessage());
         }

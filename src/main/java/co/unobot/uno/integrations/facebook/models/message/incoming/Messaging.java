@@ -1,5 +1,6 @@
 package co.unobot.uno.integrations.facebook.models.message.incoming;
 
+import co.unobot.uno.integrations.facebook.models.FBPage;
 import co.unobot.uno.integrations.facebook.models.FBUser;
 
 /**
@@ -7,7 +8,7 @@ import co.unobot.uno.integrations.facebook.models.FBUser;
  */
 public class Messaging {
     private FBUser sender;
-    private FBUser recipient;
+    private FBPage recipient;
     private String timestamp;
     private Message message;
 
@@ -19,11 +20,11 @@ public class Messaging {
         this.sender = sender;
     }
 
-    public FBUser getRecipient() {
+    public FBPage getRecipient() {
         return recipient;
     }
 
-    public void setRecipient(FBUser recipient) {
+    public void setRecipient(FBPage recipient) {
         this.recipient = recipient;
     }
 
