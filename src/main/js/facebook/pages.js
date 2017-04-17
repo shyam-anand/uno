@@ -7,7 +7,17 @@ class PageList extends React.Component {
         super(props);
         this.page = props.page;
 
+        this.categories = this.getCategories().bind(this);
+
         this.onListItemClicked = this.onListItemClicked.bind(this);
+    }
+
+    getCategories() {
+        Uno.api("/businesses/categories", function (response) {
+            if (response.success) {
+                this.categories = response.data;
+            }
+        }.bind(this))
     }
 
     onListItemClicked(e) {
@@ -38,7 +48,8 @@ export default class Pages extends React.Component {
         this.uid = props.uid;
         this.state = {
             pages: [],
-            connectedPages: []
+            connectedPages: [],
+            editingBusiness: false
         };
 
         this.pageSelected = this.pageSelected.bind(this);
@@ -152,17 +163,53 @@ export default class Pages extends React.Component {
         console.log(this.state.pages, "Rendering Pages");
         return (
             <div className="valign-wrapper">
-                <div className="full-height full-width">
-                    <div className="center">
-                        <h5 className="light">Select Pages</h5>
+                {
+                    this.state.editingBusiness ?
+                        <div className="full-height full-width">
+                            <div className="row">
+                                <form className="col s12">
+                                    <div className="row">
+                                        <div className="input-field col s6">
+                                            <input placeholder="Business Name" id="business_name" type="text"
+                                                   className="validate" value={this.state.selectedPage.name}/>
+                                            <label for="first_name">Business Name</label>
+                                        </div>
+                                        <div className="input field col s6">
+                                            <select id="business_category">
+                                                <option value="" disabled selected>Choose...</option>
+                                                {
+                                                    this.categories.map((cat) => <option
+                                                        value="{cat.id}">{cat.name}</option>)
+                                                }
+                                            </select>
+                                            <label>Category</label>
+                                        </div>
+                                    </div>
+                                    <div className="row">
+                                        <div class="input-field col s12">
+                                            <textarea id="business_desc" class="materialize-textarea"
+                                                      placeholder="Tell us about your business"></textarea>
+                                            <label for="textarea1">Description</label>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        :
+                        <div className="full-height full-width">
+                            <div className="center">
+                                <h5 className="light">Select Pages</h5>
 
-                        <p>Just click on one, and Uno will be connected to it.</p>
-                    </div>
-                    <ul className="collection links-list half-width center-block">
-                        {this.state.pages.map((page) => <PageList key={page.id} onPageSelected={this.pageSelected}
-                                                                  page={page}/>)}
-                    </ul>
-                </div>
+                                <p>Just click on one, and Uno will be connected to it.</p>
+                            </div>
+                            <ul className="collection links-list half-width center-block">
+                                {this.state.pages.map((page) => <PageList key={page.id}
+                                                                          onPageSelected={this.pageSelected}
+                                                                          page={page}/>)}
+                            </ul>
+                        </div>
+                }
+
             </div>
         )
     }

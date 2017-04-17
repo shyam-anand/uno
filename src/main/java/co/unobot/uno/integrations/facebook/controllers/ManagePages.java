@@ -1,8 +1,8 @@
 package co.unobot.uno.integrations.facebook.controllers;
 
+import co.unobot.uno.commons.dto.Response;
 import co.unobot.uno.integrations.facebook.models.FBPage;
 import co.unobot.uno.integrations.facebook.services.PagesService;
-import co.unobot.uno.models.dto.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

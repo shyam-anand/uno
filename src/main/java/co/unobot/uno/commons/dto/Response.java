@@ -1,4 +1,4 @@
-package co.unobot.uno.models.dto;
+package co.unobot.uno.commons.dto;
 
 /**
  * Created by shyam on 16/04/17.

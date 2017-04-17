@@ -4,13 +4,15 @@ import co.unobot.uno.chat.models.IncomingMessage;
 import co.unobot.uno.chat.models.UnoResponse;
 import co.unobot.uno.chat.services.UnoService;
 import co.unobot.uno.integrations.facebook.Facebook;
+import co.unobot.uno.integrations.facebook.graphapi.GraphAPIError;
+import co.unobot.uno.integrations.facebook.graphapi.GraphAPIErrorCode;
 import co.unobot.uno.integrations.facebook.graphapi.GraphApiFailureException;
 import co.unobot.uno.integrations.facebook.models.FBPage;
 import co.unobot.uno.integrations.facebook.models.FBUser;
 import co.unobot.uno.integrations.facebook.models.message.incoming.FBIncomingMessage;
 import co.unobot.uno.integrations.facebook.models.message.incoming.Message;
 import co.unobot.uno.integrations.facebook.models.message.outgoing.FBOutgoingMessage;
-import co.unobot.uno.models.User;
+import co.unobot.uno.users.models.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +56,6 @@ public class MessengerService {
                     user = messaging.getSender();
                     page = pages.get(messaging.getRecipient().getId());
 
-
                     if (messaging.getMessage() != null) {
                         Message message = messaging.getMessage();
 
@@ -87,6 +88,11 @@ public class MessengerService {
 
         try {
             facebook.sendMessage(outgoingMessage, page.getAccessToken());
+        } catch (GraphAPIError error) {
+            if (error.getCode() == GraphAPIErrorCode.CODE_INVALID_ACCESS_TOKEN.code() && error.getSubCode() == GraphAPIErrorCode.SUBCODE_SESSION_EXPIRED.code()) {
+                page = pages.renewAccessToken(page);
+                send(messageText);
+            }
         } catch (GraphApiFailureException e) {
             logger.error("Message sending failed: " + e.getMessage());
         }

@@ -1,10 +1,11 @@
-package co.unobot.uno.ai;
+package co.unobot.uno.ai.services;
 
 import ai.api.AIConfiguration;
 import ai.api.AIDataService;
 import ai.api.AIServiceException;
 import ai.api.model.AIRequest;
 import ai.api.model.AIResponse;
+import co.unobot.uno.ai.AIException;
 import co.unobot.uno.chat.models.UnoResponse;
 import com.google.gson.Gson;
 import org.slf4j.Logger;

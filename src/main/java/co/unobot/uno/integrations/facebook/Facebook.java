@@ -1,5 +1,6 @@
 package co.unobot.uno.integrations.facebook;
 
+import co.unobot.uno.integrations.facebook.graphapi.GraphAPIError;
 import co.unobot.uno.integrations.facebook.graphapi.GraphAPIRequest;
 import co.unobot.uno.integrations.facebook.graphapi.GraphApiFailureException;
 import co.unobot.uno.integrations.facebook.graphapi.models.SendAPIResponse;
@@ -55,15 +56,19 @@ public class Facebook {
         return config;
     }
 
-    public SendAPIResponse sendMessage(FBOutgoingMessage message, String pageAccessToken) throws GraphApiFailureException {
+    public SendAPIResponse sendMessage(FBOutgoingMessage message, String pageAccessToken) throws GraphApiFailureException, GraphAPIError {
         GraphAPIRequest<SendAPIResponse> request = new GraphAPIRequest<>(MESSAGES_API.build().encode().toUri(), pageAccessToken, SendAPIResponse.class);
         return request.execute(message);
     }
 
-    public SimpleGraphResponse addSubscription(String pageId, String accessToken) throws GraphApiFailureException {
+    public SimpleGraphResponse addSubscription(String pageId, String accessToken) throws GraphApiFailureException, GraphAPIError {
         URI pagesUri = PAGES_API.buildAndExpand(pageId).toUri();
         logger.info("Sending subscription request - " + pagesUri.toString());
         GraphAPIRequest<SimpleGraphResponse> request = new GraphAPIRequest<>(pagesUri, accessToken, SimpleGraphResponse.class);
         return request.execute(null);
+    }
+
+    public String getAccessToken(String pageId) {
+        return null;
     }
 }

@@ -9,9 +9,11 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.io.IOException;
 import java.net.URI;
 
 /**
+ * Wrapper for Facebook Graph APIs
  * Created by shyam on 09/04/17.
  */
 public class GraphAPIRequest<T> {
@@ -28,7 +30,7 @@ public class GraphAPIRequest<T> {
         this.responseType = responseType;
     }
 
-    public T execute(Object requestObject) throws GraphApiFailureException {
+    public T execute(Object requestObject) throws GraphApiFailureException, GraphAPIError {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -58,8 +60,16 @@ public class GraphAPIRequest<T> {
                 throw new GraphApiFailureException(responseEntity.getStatusCode(), responseEntity.getStatusCode().getReasonPhrase());
             }
         } catch (HttpClientErrorException e) {
-            logger.error(e.getMessage() + "\n" + e.getResponseBodyAsString());
-            throw new GraphApiFailureException(e.getStatusCode(), e.getMessage());
+            try {
+                logger.error(e.getMessage() + ": " + e.getResponseBodyAsString());
+
+                String responseString = e.getResponseBodyAsString();
+                ObjectMapper mapper = new ObjectMapper();
+                GraphAPIError graphAPIError = mapper.readValue(responseString, GraphAPIError.class);
+                throw graphAPIError;
+            } catch (IOException ex) {
+                throw new GraphApiFailureException(e.getStatusCode(), e.getMessage());
+            }
         } catch (JsonProcessingException e) {
             logger.warn("Unable to parse object to JSON: " + e.getMessage());
             throw new GraphApiFailureException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());

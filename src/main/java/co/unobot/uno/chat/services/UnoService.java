@@ -1,7 +1,7 @@
 package co.unobot.uno.chat.services;
 
 import co.unobot.uno.ai.AIException;
-import co.unobot.uno.ai.AIService;
+import co.unobot.uno.ai.services.AIService;
 import co.unobot.uno.chat.models.IncomingMessage;
 import co.unobot.uno.chat.models.UnoResponse;
 import org.slf4j.Logger;

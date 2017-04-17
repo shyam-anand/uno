@@ -41,4 +41,9 @@ public class PagesService {
         List<FBPage> pages = pagesRepo.findByUserId(userId);
         return pages.stream().map(FBPage::getId).collect(Collectors.toList());
     }
+
+    public FBPage renewAccessToken(FBPage page) {
+        facebook.getAccessToken(page.getId());
+        return null;
+    }
 }

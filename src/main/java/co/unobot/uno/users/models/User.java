@@ -1,5 +1,6 @@
-package co.unobot.uno.models;
+package co.unobot.uno.users.models;
 
+import co.unobot.uno.businesses.models.Business;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;

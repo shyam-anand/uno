@@ -1,0 +1,1 @@
+RENAME TABLE `bot_config` TO `agent_config`;
