@@ -3,9 +3,9 @@ package co.unobot.uno.businesses.models;
 import co.unobot.uno.integrations.facebook.models.FBPage;
 import co.unobot.uno.integrations.facebook.models.FBUser;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 
@@ -17,7 +17,7 @@ import javax.persistence.Table;
 @Table(name = "business")
 public class Business {
 
-    @JsonProperty("id")
+    @Id
     private String id;
     private String name;
     @JoinColumn(name = "fb_user_id")
