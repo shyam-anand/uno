@@ -5,6 +5,8 @@ import co.unobot.uno.businesses.models.Business;
 import co.unobot.uno.businesses.models.Category;
 import co.unobot.uno.businesses.repositories.BusinessRepository;
 import co.unobot.uno.businesses.repositories.CategoryRepository;
+import co.unobot.uno.integrations.facebook.services.FBPagesService;
+import co.unobot.uno.integrations.facebook.services.FBUsersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +23,12 @@ public class BusinessService {
     @Autowired
     private CategoryRepository categories;
 
+    @Autowired
+    private FBPagesService fbPages;
+
+    @Autowired
+    private FBUsersService fbUsers;
+
     private Business business;
 
     public List<Category> getCategories() {
@@ -30,14 +38,20 @@ public class BusinessService {
     public Business create(BusinessDTO businessData) {
         business = new Business();
         business.setName(businessData.getName());
-        Category category = categories.findByName(businessData.getCategory());
-        business.setCategory(category);
+        business.setCategory(categories.findByName(businessData.getCategory()));
         business.setDescription(businessData.getDescription());
         business.setAddress(businessData.getAddress());
+        business.setFbPage(fbPages.get(businessData.getFbPageId()));
+        business.setFbUser(fbUsers.get(businessData.getFbUserId()));
         return save();
+    }
+
+    public Business getForFBPage(String fbPageId) {
+        return businesses.findByFbPage(fbPages.get(fbPageId));
     }
 
     private Business save() {
         return businesses.save(business);
     }
+
 }

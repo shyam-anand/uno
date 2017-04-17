@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
  * Created by shyam on 16/04/17.
  */
 @Service
-public class UsersService {
+public class FBUsersService {
 
     @Autowired
     private FBUserRepo userRepo;
@@ -24,7 +24,7 @@ public class UsersService {
 
     public FBUser login(FBUser fbUser) {
         FBUser user = userRepo.findOne(fbUser.getId());
-        if (user == null) {
+        if (user == null || user.getId() == null) {
             user = new FBUser();
             user.setId(fbUser.getId());
         }

@@ -30,7 +30,7 @@ public class DataSourceConfig {
     @Bean
     public DataSource dataSource() throws Exception {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName(driverClassName);
+//        dataSource.setDriverClassName(driverClassName);
         dataSource.setUrl(dbUrl);
         dataSource.setUsername(dbUsername);
         dataSource.setPassword(password);

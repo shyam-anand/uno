@@ -15,7 +15,8 @@ import javax.persistence.*;
 public class Business {
 
     @Id
-    private String id;
+    @GeneratedValue
+    private Integer id;
     private String name;
     @ManyToOne
     @JoinColumn(name = "fb_user_id")
@@ -24,15 +25,16 @@ public class Business {
     @JoinColumn(name = "fb_page_id")
     private FBPage fbPage;
     @ManyToOne
+    @JoinColumn(name = "category")
     private Category category;
     private String description;
     private String address;
 
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -83,4 +85,6 @@ public class Business {
     public void setAddress(String address) {
         this.address = address;
     }
+
+
 }

@@ -2,7 +2,7 @@ package co.unobot.uno.integrations.facebook.controllers;
 
 import co.unobot.uno.commons.dto.Response;
 import co.unobot.uno.integrations.facebook.models.FBPage;
-import co.unobot.uno.integrations.facebook.services.PagesService;
+import co.unobot.uno.integrations.facebook.services.FBPagesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 public class ManagePages {
 
     @Autowired
-    private PagesService pages;
+    private FBPagesService pages;
 
     @RequestMapping(value = "/", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity subscribe(@RequestBody FBPage page) {

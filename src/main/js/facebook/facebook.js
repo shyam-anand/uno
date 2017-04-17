@@ -40,11 +40,10 @@ export default class Facebook extends React.Component {
 
     componentWillMount() {
         //FB.AppEvents.logPageView();
-
-        this.FB.getLoginStatus(this.onStatusChange);
     }
 
     componentDidMount() {
+        this.FB.getLoginStatus(this.onStatusChange);
         this.FB.Event.subscribe('auth.logout', this.onLogout.bind(this));
         this.FB.Event.subscribe('auth.statusChange', this.onStatusChange);
     }
@@ -144,7 +143,8 @@ export default class Facebook extends React.Component {
                         <div className="center-block">
                             <h2 className="thin">Hello.</h2>
                             <h4 className="thin">Let's build bots!</h4>
-                            <a className="btn blue darken-4" onClick={this.fbLogin}>Sign in with Facebook</a>
+                            <a className="btn-flat blue darken-4 white-text" onClick={this.fbLogin}>Sign in with
+                                Facebook</a>
                         </div>
                     </div>
                     :
@@ -154,12 +154,20 @@ export default class Facebook extends React.Component {
                                 {
                                     this.state.hasPagesPerms == true ?
                                         <Pages fb={this.FB} uid={this.state.uid}/> :
-                                        <div className="valign-wrapper">
-                                            <p className="center">
+                                        <div className="valign-wrapper full-height full-width">
+                                            <div className="center-block center">
+                                                <p>
+                                                    Uno requires permission to manage your pages, so that it can connect
+                                                    to it and talk to users who message your page.
+                                                </p>
+
+                                                <p>
+                                                    We won't post anything without your permission.
+                                                </p>
                                                 <a className="btn blue darken-4" onClick={this.getPermissions}>
                                                     Give permission to manage pages
                                                 </a>
-                                            </p>
+                                            </div>
                                         </div>
                                 }
                             </div>

@@ -3,6 +3,7 @@ package co.unobot.uno.integrations.facebook.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.data.domain.Persistable;
 
 import javax.persistence.*;
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.List;
 @Entity
 @Table(name = "fb_users")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class FBUser {
+public class FBUser implements Persistable<String> {
 
     @Id
     @Column(name = "user_id")
@@ -53,5 +54,10 @@ public class FBUser {
 
     public void setPages(List<FBPage> pages) {
         this.pages = pages;
+    }
+
+    @Override
+    public boolean isNew() {
+        return id == null;
     }
 }

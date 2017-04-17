@@ -1,6 +1,7 @@
 package co.unobot.uno.businesses.controllers;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Created by shyam on 17/04/17.
@@ -13,6 +14,10 @@ public class BusinessDTO {
     private String category;
     private String description;
     private String address;
+    @JsonProperty("fb_page_id")
+    private String fbPageId;
+    @JsonProperty("fb_user_id")
+    private String fbUserId;
 
     public int getId() {
         return id;
@@ -52,5 +57,21 @@ public class BusinessDTO {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getFbPageId() {
+        return fbPageId;
+    }
+
+    public void setFbPageId(String fbPageId) {
+        this.fbPageId = fbPageId;
+    }
+
+    public String getFbUserId() {
+        return fbUserId;
+    }
+
+    public void setFbUserId(String fbUserId) {
+        this.fbUserId = fbUserId;
     }
 }

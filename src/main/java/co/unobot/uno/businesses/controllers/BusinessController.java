@@ -8,10 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Created by shyam on 17/04/17.
@@ -31,9 +28,14 @@ public class BusinessController {
         return new ResponseEntity<>(new Response(true, businesses.getCategories()), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/*", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity createBusiness(@RequestBody BusinessDTO business) {
         return new ResponseEntity<>(new Response(true, getDTO(businesses.create(business))), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity get(@RequestParam("fb_page") String fbPageId) {
+        return new ResponseEntity<>(new Response(true, businesses.getForFBPage(fbPageId)), HttpStatus.OK);
     }
 
     private BusinessDTO getDTO(Business business) {

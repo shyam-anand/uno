@@ -1,100 +1,7 @@
 const React = require('react');
 
 import Uno from './uno';
-
-class BusinessForm extends React.Component {
-
-    constructor(props) {
-        this.page = props.page;
-        this.categories = props.categories;
-        this.saveBusiness = props.saveBusiness;
-        this.state = {
-            name: this.page.name,
-            category: '',
-            description: '',
-            address: ''
-        };
-
-        this.handleChange = this.handleChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
-    }
-
-    handleChange(e) {
-        const target = e.target;
-        const value = target.type == 'checkbox' ? target.checked : target.value;
-        const name = target.name;
-
-        this.setState({
-            [name]: value
-        })
-    }
-
-    handleSubmit(e) {
-        e.preventDefault();
-
-        Uno.api("/businesses", 'POST', {
-            name: this.state.name,
-            category: this.state.category,
-            description: this.state.description,
-            address: this.state.address
-        }, function (response) {
-            if (response.success) {
-                this.saveBusiness(true);
-            }
-        }.bind(this))
-    }
-
-    render() {
-        return (
-            <div className="full-height full-width">
-                <div className="row">
-                    <form className="col s12">
-                        <div className="row">
-                            <div className="input-field col s6">
-                                <input placeholder="Business Name" id="name" type="text" onChange={this.handleChange}
-                                       className="validate" value={this.state.name}/>
-                                <label for="first_name">Business Name</label>
-                            </div>
-                            <div className="input field col s6">
-                                <select id="category" value={this.state.category} onChange={this.handleChange}>
-                                    <option value="" disabled selected>Choose...</option>
-                                    {
-                                        this.categories.map((cat) =>
-                                            <option value="{cat.id}">{cat.name}</option>)
-                                    }
-                                </select>
-                                <label>Category</label>
-                            </div>
-                        </div>
-                        <div className="row">
-                            <div className="input-field col s12">
-                                            <textarea id="description" className="materialize-textarea"
-                                                      onChange={this.handleChange}
-                                                      placeholder="Tell us about your business"
-                                                      value={this.state.description}></textarea>
-                                <label for="description">Description</label>
-                            </div>
-                        </div>
-                        <div className="row">
-                            <div className="input-field col s12">
-                                <textarea id="address" className="materialize-textarea" onChange={this.handleChange}
-                                          placeholder="" value={this.state.address}></textarea>
-                                <label for="address">Address</label>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div className="row">
-                    <div className="col s2 offset-s10">
-                        <button class="btn waves-effect waves-light blue darken-4" type="submit" name="save_business">
-                            Submit
-                        </button>
-                    </div>
-                </div>
-            </div>
-        );
-    }
-}
+import BusinessForm from './business';
 
 class PageList extends React.Component {
 
@@ -102,17 +9,7 @@ class PageList extends React.Component {
         super(props);
         this.page = props.page;
 
-        this.categories = this.getCategories().bind(this);
-
         this.onListItemClicked = this.onListItemClicked.bind(this);
-    }
-
-    getCategories() {
-        Uno.api("/businesses/categories", function (response) {
-            if (response.success) {
-                this.categories = response.data;
-            }
-        }.bind(this))
     }
 
     onListItemClicked() {
@@ -148,21 +45,24 @@ export default class Pages extends React.Component {
         };
 
         this.pageSelected = this.pageSelected.bind(this);
-        console.log("Initialised pages. uid: " + this.uid)
+
     }
+
 
     pageSelected(page) {
         console.log(page, "page selected");
         if (page.connected == false) {
             this.setState({selectedPage: page});
-
             this.FB.api(
                 `/${page.id}/subscribed_apps`,
                 'post',
                 {access_token: page.access_token},
                 this.pageSubscribed.bind(this));
         } else {
-            console.log("TO BE DISCONNECTED");
+            this.setState({
+                selectedPage: page,
+                editingBusiness: true
+            })
         }
     }
 
@@ -203,7 +103,8 @@ export default class Pages extends React.Component {
             }
             this.setState({
                 pages: pages,
-                connectedPages: connectedPages
+                connectedPages: connectedPages,
+                editingBusiness: true
             });
         }.bind(this));
 
@@ -256,7 +157,8 @@ export default class Pages extends React.Component {
 
     saveBusiness(status) {
         this.setState({
-            businessSaved: status
+            businessSaved: status,
+            editingBusiness: false
         })
     }
 
@@ -266,19 +168,16 @@ export default class Pages extends React.Component {
             <div className="valign-wrapper">
                 {
                     this.state.editingBusiness ?
-                        <BusinessForm page={this.state.selectedPage} categories={this.categories}
+                        <BusinessForm page={this.state.selectedPage} fbUserId={this.uid}
                                       saveBusiness={this.saveBusiness.bind(this)}/>
                         :
                         <div className="full-height full-width">
                             <div className="center">
                                 <h5 className="light">Select Pages</h5>
-
-                                <p>Just click on one, and Uno will be connected to it.</p>
                             </div>
                             <ul className="collection links-list half-width center-block">
-                                {this.state.pages.map((page) => <PageList key={page.id}
-                                                                          onPageSelected={this.pageSelected}
-                                                                          page={page}/>)}
+                                {this.state.pages.map((page) =>
+                                    <PageList key={page.id} onPageSelected={this.pageSelected} page={page}/>)}
                             </ul>
                         </div>
                 }

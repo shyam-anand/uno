@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
  * Created by shyam on 09/04/17.
  */
 @Service
-public class PagesService {
+public class FBPagesService {
 
     @Autowired
     private Facebook facebook;

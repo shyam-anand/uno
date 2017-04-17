@@ -34,7 +34,7 @@ public class MessengerService {
     private UnoService uno;
 
     @Autowired
-    private PagesService pages;
+    private FBPagesService pages;
 
     private FBUser user;
     private FBPage page;
