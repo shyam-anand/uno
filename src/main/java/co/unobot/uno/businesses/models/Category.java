@@ -2,11 +2,13 @@ package co.unobot.uno.businesses.models;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 /**
  * Created by shyam on 17/04/17.
  */
 @Entity
+@Table(name = "category")
 public class Category {
 
     @Id

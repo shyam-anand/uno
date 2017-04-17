@@ -4,10 +4,7 @@ import co.unobot.uno.integrations.facebook.models.FBPage;
 import co.unobot.uno.integrations.facebook.models.FBUser;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
  * Created by shyam on 02/04/17.
@@ -20,11 +17,13 @@ public class Business {
     @Id
     private String id;
     private String name;
+    @ManyToOne
     @JoinColumn(name = "fb_user_id")
     private FBUser fbUser;
+    @OneToOne
     @JoinColumn(name = "fb_page_id")
     private FBPage fbPage;
-    @JoinColumn(name = "category")
+    @ManyToOne
     private Category category;
     private String description;
     private String address;

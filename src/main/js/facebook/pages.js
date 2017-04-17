@@ -1,6 +1,101 @@
 const React = require('react');
 
 import Uno from './uno';
+
+class BusinessForm extends React.Component {
+
+    constructor(props) {
+        this.page = props.page;
+        this.categories = props.categories;
+        this.saveBusiness = props.saveBusiness;
+        this.state = {
+            name: this.page.name,
+            category: '',
+            description: '',
+            address: ''
+        };
+
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
+
+    handleChange(e) {
+        const target = e.target;
+        const value = target.type == 'checkbox' ? target.checked : target.value;
+        const name = target.name;
+
+        this.setState({
+            [name]: value
+        })
+    }
+
+    handleSubmit(e) {
+        e.preventDefault();
+
+        Uno.api("/businesses", 'POST', {
+            name: this.state.name,
+            category: this.state.category,
+            description: this.state.description,
+            address: this.state.address
+        }, function (response) {
+            if (response.success) {
+                this.saveBusiness(true);
+            }
+        }.bind(this))
+    }
+
+    render() {
+        return (
+            <div className="full-height full-width">
+                <div className="row">
+                    <form className="col s12">
+                        <div className="row">
+                            <div className="input-field col s6">
+                                <input placeholder="Business Name" id="name" type="text" onChange={this.handleChange}
+                                       className="validate" value={this.state.name}/>
+                                <label for="first_name">Business Name</label>
+                            </div>
+                            <div className="input field col s6">
+                                <select id="category" value={this.state.category} onChange={this.handleChange}>
+                                    <option value="" disabled selected>Choose...</option>
+                                    {
+                                        this.categories.map((cat) =>
+                                            <option value="{cat.id}">{cat.name}</option>)
+                                    }
+                                </select>
+                                <label>Category</label>
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="input-field col s12">
+                                            <textarea id="description" className="materialize-textarea"
+                                                      onChange={this.handleChange}
+                                                      placeholder="Tell us about your business"
+                                                      value={this.state.description}></textarea>
+                                <label for="description">Description</label>
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="input-field col s12">
+                                <textarea id="address" className="materialize-textarea" onChange={this.handleChange}
+                                          placeholder="" value={this.state.address}></textarea>
+                                <label for="address">Address</label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div className="row">
+                    <div className="col s2 offset-s10">
+                        <button class="btn waves-effect waves-light blue darken-4" type="submit" name="save_business">
+                            Submit
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+}
+
 class PageList extends React.Component {
 
     constructor(props) {
@@ -20,7 +115,7 @@ class PageList extends React.Component {
         }.bind(this))
     }
 
-    onListItemClicked(e) {
+    onListItemClicked() {
         this.props.onPageSelected(this.page);
     }
 
@@ -159,42 +254,20 @@ export default class Pages extends React.Component {
         }.bind(this));
     }
 
+    saveBusiness(status) {
+        this.setState({
+            businessSaved: status
+        })
+    }
+
     render() {
         console.log(this.state.pages, "Rendering Pages");
         return (
             <div className="valign-wrapper">
                 {
                     this.state.editingBusiness ?
-                        <div className="full-height full-width">
-                            <div className="row">
-                                <form className="col s12">
-                                    <div className="row">
-                                        <div className="input-field col s6">
-                                            <input placeholder="Business Name" id="business_name" type="text"
-                                                   className="validate" value={this.state.selectedPage.name}/>
-                                            <label for="first_name">Business Name</label>
-                                        </div>
-                                        <div className="input field col s6">
-                                            <select id="business_category">
-                                                <option value="" disabled selected>Choose...</option>
-                                                {
-                                                    this.categories.map((cat) => <option
-                                                        value="{cat.id}">{cat.name}</option>)
-                                                }
-                                            </select>
-                                            <label>Category</label>
-                                        </div>
-                                    </div>
-                                    <div className="row">
-                                        <div class="input-field col s12">
-                                            <textarea id="business_desc" class="materialize-textarea"
-                                                      placeholder="Tell us about your business"></textarea>
-                                            <label for="textarea1">Description</label>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
+                        <BusinessForm page={this.state.selectedPage} categories={this.categories}
+                                      saveBusiness={this.saveBusiness.bind(this)}/>
                         :
                         <div className="full-height full-width">
                             <div className="center">

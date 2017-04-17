@@ -18,6 +18,7 @@ public class Agent {
     private String clientAccessToken;
     @Column(name = "developer_access_token")
     private String developerAccessToken;
+    @ManyToOne
     @JoinTable(
             name = "category_agent",
             joinColumns = {@JoinColumn(name = "agent")},
