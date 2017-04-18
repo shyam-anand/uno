@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/facebook/pages")
-public class ManagePages {
+public class FBPageController {
 
     @Autowired
     private FBPagesService pages;
@@ -29,5 +29,10 @@ public class ManagePages {
     @RequestMapping(value = "/{userId}", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity subscriptions(@PathVariable("userId") String userId) {
         return new ResponseEntity<>(new Response(true, pages.subscriptions(userId)), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/{pageId}/agent", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity getAgent(@PathVariable("pageId") String pageId) {
+        return new ResponseEntity<>(pages.getConnectedAgent(pageId), HttpStatus.OK);
     }
 }

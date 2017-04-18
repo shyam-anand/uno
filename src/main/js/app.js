@@ -21,11 +21,11 @@ class App extends React.Component {
     render() {
         return (
             <div>
-                <div className="row z-depth-1">
+                <div className="row">
                     <div className="col s6">
                         <span className="logo-text">UNO</span>
                     </div>
-                    <div className="col s1 offset-s5 valign-wrapper">
+                    <div className="col s2 offset-s4 valign-wrapper">
                         <p className="grey-text strong ">{this.state.username}</p>
                     </div>
                 </div>

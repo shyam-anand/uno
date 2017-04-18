@@ -1,5 +1,7 @@
 package co.unobot.uno.businesses.services;
 
+import co.unobot.uno.ai.Agent;
+import co.unobot.uno.ai.services.AgentService;
 import co.unobot.uno.businesses.controllers.BusinessDTO;
 import co.unobot.uno.businesses.models.Business;
 import co.unobot.uno.businesses.models.Category;
@@ -29,29 +31,44 @@ public class BusinessService {
     @Autowired
     private FBUsersService fbUsers;
 
-    private Business business;
+    @Autowired
+    private AgentService agents;
 
     public List<Category> getCategories() {
         return categories.findAll();
     }
 
     public Business create(BusinessDTO businessData) {
-        business = new Business();
+        Business business = new Business();
         business.setName(businessData.getName());
         business.setCategory(categories.findByName(businessData.getCategory()));
         business.setDescription(businessData.getDescription());
         business.setAddress(businessData.getAddress());
         business.setFbPage(fbPages.get(businessData.getFbPageId()));
         business.setFbUser(fbUsers.get(businessData.getFbUserId()));
-        return save();
+        return save(business);
     }
 
     public Business getForFBPage(String fbPageId) {
         return businesses.findByFbPage(fbPages.get(fbPageId));
     }
 
-    private Business save() {
+    private Business save(Business business) {
         return businesses.save(business);
     }
 
+    public List<Business> getAll() {
+        return (List<Business>) businesses.findAll();
+    }
+
+    public Business connect(int businessId, Agent agent) {
+        agent = agents.get(agent.getId());
+        Business business = businesses.findOne(businessId);
+        business.setAgent(agent);
+        return save(business);
+    }
+
+    public Business get(int businessId) {
+        return businesses.findOne(businessId);
+    }
 }

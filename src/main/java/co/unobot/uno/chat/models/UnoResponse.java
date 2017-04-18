@@ -35,7 +35,10 @@ public class UnoResponse {
     @JsonProperty("parameters")
     private List<UnoResponseParameters> unoResponseParametersList;
 
-    public UnoResponse(Result result) {
+    public UnoResponse() {
+    }
+
+    public UnoResponse fromAIResult(Result result) {
         action = result.getAction();
         score = result.getScore();
         message = result.getFulfillment().getSpeech();
@@ -83,6 +86,8 @@ public class UnoResponse {
                 return unoResponseParameters;
             }).collect(Collectors.toList());
         }
+
+        return this;
     }
 
     public String getMessage() {

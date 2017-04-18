@@ -1,8 +1,11 @@
 package co.unobot.uno.businesses.models;
 
+import co.unobot.uno.ai.Agent;
 import co.unobot.uno.integrations.facebook.models.FBPage;
 import co.unobot.uno.integrations.facebook.models.FBUser;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
 
@@ -12,6 +15,7 @@ import javax.persistence.*;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
 @Table(name = "business")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Business {
 
     @Id
@@ -29,6 +33,9 @@ public class Business {
     private Category category;
     private String description;
     private String address;
+    @OneToOne
+    @JoinTable(name = "business_agent", joinColumns = @JoinColumn(name = "business"), inverseJoinColumns = @JoinColumn(name = "agent"))
+    private Agent agent;
 
     public Integer getId() {
         return id;
@@ -86,5 +93,11 @@ public class Business {
         this.address = address;
     }
 
+    public Agent getAgent() {
+        return agent;
+    }
 
+    public void setAgent(Agent agent) {
+        this.agent = agent;
+    }
 }

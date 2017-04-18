@@ -8,14 +8,14 @@ export default class BusinessForm extends React.Component {
         super(props);
         this.page = props.page;
         this.fbUserId = props.fbUserId;
-        this.saveBusiness = props.saveBusiness;
         this.state = {
             categories: [],
             name: this.page.name,
             category: "0",
             description: '',
             address: '',
-            businessSaved: false
+            business: null,
+            screen: 'pages'
         };
 
         this.handleChange = this.handleChange.bind(this);
@@ -46,9 +46,10 @@ export default class BusinessForm extends React.Component {
         }, function (response) {
             console.log(response, "Create business");
             if (response.success) {
-                this.saveBusiness(true);
+                //this.saveBusiness(true);
                 this.setState({
-                    businessSaved: true
+                    business: response.data,
+                    screen: 'agents'
                 })
             }
         }.bind(this))
@@ -69,20 +70,29 @@ export default class BusinessForm extends React.Component {
             console.log(response, "Business for Page");
             if (response.success && response.data) {
                 this.setState({
-                    businessSaved: true
+                    business: response.data,
+                    screen: 'agents'
                 })
             }
         }.bind(this));
     }
 
-    connectAgent(agent) {
+    agentConnected(business) {
+        this.props.businessSaved(business, this.page);
+    }
 
+    pagesScreen() {
+        this.setState({
+            screen: 'pages'
+        })
     }
 
     render() {
-        if (this.state.businessSaved) {
+        if (this.state.screen == 'agents') {
+            console.log(this.state.business, "Rendering ConnectAgent");
             return (
-                <ConnectAgent connectAgent={this.connectAgent.bind(this)}/>
+                <ConnectAgent agentConnected={this.agentConnected.bind(this)} business={this.state.business}
+                              back={this.props.cancel}/>
             );
         } else {
             return (
@@ -128,7 +138,12 @@ export default class BusinessForm extends React.Component {
                                 </div>
                             </div>
                             <div className="row">
-                                <div className="col s4 offset-s4">
+                                <div className="col s3 offset-s4">
+                                    <button className="btn gray darken-4 col s12" onClick={this.props.cancel}>
+                                        Save
+                                    </button>
+                                </div>
+                                <div className="col s3 offset-s1">
                                     <button className="btn blue darken-4 col s12" type="submit"
                                             name="save_business">
                                         Save
@@ -147,6 +162,7 @@ class ConnectAgent extends React.Component {
     constructor(props) {
         super(props);
 
+        this.business = this.props.business;
         this.state = {
             agents: []
         }
@@ -163,22 +179,37 @@ class ConnectAgent extends React.Component {
     }
 
     connect(e) {
-        console.log(e.target, "connect agent click target");
-        console.log(e.target.name, "connect agent click target name");
-        console.log(e.target.props.agent, "connect agent click target.props.agent");
+        var agentId = e.target.name;
+        Uno.api(`/businesses/${this.props.business.id}/agent`, "PUT", {id: agentId}, function (response, status) {
+            console.log(response, "Connect Bot to Business");
+            if (status == 'success') {
+                this.props.agentConnected(response);
+            }
+        }.bind(this))
     }
 
     render() {
         return (
             <div className="container">
+                <div className="row">
+                    <div className="col s2">
+                        <button className="btn-flat" onClick={this.props.back}><i
+                            className="material-icons">fast_rewind</i></button>
+                    </div>
+                    <h5 className="thin col s4 offset-s2">Choose an agent</h5>
+                </div>
                 <ul className="collection">
                     {this.state.agents.map((agent) =>
                         <li className="collection-item" key={agent.name}>
-                            <h5 className="thin">{agent.name}</h5>
+                            <h6 className="light">{agent.name}</h6>
 
                             <p>{agent.description}</p>
-                            <a className="btn blue darken-4" onClick={this.connect.bind(this)} name={agent.id}
-                               agent={agent}>Connect</a>
+
+                            <div className="row">
+                                <a className="btn-flat blue-text darken-4 col s2 offset-s10 center"
+                                   onClick={this.connect.bind(this)}
+                                   name={agent.id}>Connect</a>
+                            </div>
                         </li>)}
                 </ul>
             </div>

@@ -1,7 +1,7 @@
-package co.unobot.uno.integrations.facebook;
+package co.unobot.uno.integrations.facebook.controllers;
 
 import co.unobot.uno.integrations.facebook.models.message.incoming.FBIncomingMessage;
-import co.unobot.uno.integrations.facebook.services.MessengerService;
+import co.unobot.uno.integrations.facebook.services.MessengerReceiver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,7 @@ public class WebHook {
     private static final Logger logger = LoggerFactory.getLogger(WebHook.class);
 
     @Autowired
-    private MessengerService messengerService;
+    private MessengerReceiver messengerReceiver;
 
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity webHookPost(HttpServletRequest request,
@@ -35,7 +35,7 @@ public class WebHook {
     public ResponseEntity webHook(@RequestBody FBIncomingMessage fbMessage) {
         logger.info("POST - " + fbMessage);
 
-        messengerService.receive(fbMessage);
+        messengerReceiver.receive(fbMessage);
 
         return new ResponseEntity<>(fbMessage, HttpStatus.OK);
     }

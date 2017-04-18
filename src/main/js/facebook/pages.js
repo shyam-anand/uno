@@ -9,7 +9,34 @@ class PageList extends React.Component {
         super(props);
         this.page = props.page;
 
+        this.state = {
+            img: '',
+            connected: false
+        };
+
         this.onListItemClicked = this.onListItemClicked.bind(this);
+    }
+
+    componentDidMount() {
+        FB.api(
+            `/${this.page.id}/picture?height=42&width=42`,
+            function (response) {
+                console.log(response, `${this.page.id}/picture`);
+                if (response && !response.error) {
+                    this.setState({
+                        img: response.data.url
+                    });
+                }
+            }.bind(this)
+        );
+
+        Uno.api(`/facebook/pages/${this.page.id}/agent`, function (response, status, xhr) {
+            if (response) {
+                this.setState({
+                    connected: true
+                })
+            }
+        }.bind(this));
     }
 
     onListItemClicked() {
@@ -20,12 +47,13 @@ class PageList extends React.Component {
         console.log("Rendering PageList");
         return (
             <li className="collection-item avatar" onClick={this.onListItemClicked}>
-                <span className="title strong">{this.page.name}</span>
+                <img src={this.state.img} alt="" className="square"/>
+                <strong className="title">{this.page.name}</strong>
 
-                <div className="grey-text">{this.page.category}</div>
-                {this.page.connected == true ?
-                    <span className="secondary-content"><i className="material-icons green-text">done</i></span>
-                    : ''}
+                <p className="grey-text">{this.page.category}</p>
+                {this.state.connected ?
+                    <a href="#!" className="secondary-content"><i className="material-icons">done</i></a> : ''}
+
             </li>
         );
     }
@@ -39,47 +67,22 @@ export default class Pages extends React.Component {
         this.uno = new Uno();
         this.uid = props.uid;
         this.state = {
+            accessToken: props.accessToken,
+            loading: true,
             pages: [],
             connectedPages: [],
             editingBusiness: false
         };
-
-        this.pageSelected = this.pageSelected.bind(this);
-
     }
 
 
     pageSelected(page) {
         console.log(page, "page selected");
-        if (page.connected == false) {
-            this.setState({selectedPage: page});
-            this.FB.api(
-                `/${page.id}/subscribed_apps`,
-                'post',
-                {access_token: page.access_token},
-                this.pageSubscribed.bind(this));
-        } else {
-            this.setState({
-                selectedPage: page,
-                editingBusiness: true
-            })
-        }
-    }
+        this.setState({
+            selectedPage: page,
+            editingBusiness: true
+        })
 
-    pageSubscribed(response) {
-        if (!response || response.error) {
-            console.error(response.error.message, "subscribed_apps error");
-        } else {
-            Uno.fbSubscribeToPage({
-                id: this.state.selectedPage.id,
-                name: this.state.selectedPage.name,
-                access_token: this.state.selectedPage.access_token,
-                user: {
-                    id: this.uid
-                }
-            }, this.setConnectedPages.bind(this));
-            console.log(response, "Subscribed to Page");
-        }
     }
 
     setConnectedPages() {
@@ -88,97 +91,120 @@ export default class Pages extends React.Component {
         var pages = this.state.pages;
         var connectedPages = this.state.connectedPages;
 
-        Uno.api(`/facebook/pages/${this.uid}`, function (response) {
-            console.log(response, "Connected pages");
-            if (response.success) {
-                var subscribedPages = response.data;
-                pages.forEach(function (page, i) {
-                    if ($.inArray(page.id, subscribedPages) > -1) {
-                        connectedPages.push(page.id);
-                        pages[i].connected = true;
-                    } else {
-                        pages[i].connected = false;
-                    }
-                }, this)
-            }
-            this.setState({
-                pages: pages,
-                connectedPages: connectedPages,
-                editingBusiness: true
-            });
-        }.bind(this));
+        Uno.api(`/${this.uid}/businesses`, function (businesses) {
+            console.log(businesses, "user's businesses");
+            pages.forEach(function (page, i) {
+                var j = $.inArray(page.id, businesses);
+                if (j > -1 && businesses[j].agent != null) {
+                    connectedPages.push(page, id);
+                    pages[i].connected = true;
+                } else {
+                    pages[i].connected = false;
+                }
+            }.bind(this))
+        });
 
         console.log(this.state.pages, "After setConnectedPages");
     }
 
-    componentWillMount() {
-        this.FB.api(`/${this.uid}/accounts`, function (response) {
-            console.log(response, "/accounts");
-            if (response && !response.error) {
-                var pages = response.data;
-                var connectedPages = [];
-
-                pages.forEach((page, i) => {
-                    FB.api(
-                        `/${page.id}/picture?height=32&width=32`,
-                        function (response) {
-                            if (response && !response.error) {
-                                pages[i].img = response.data.url;
-                            }
-                        }.bind(this)
-                    )
-                });
-
-                Uno.api(`/facebook/pages/${this.uid}`, function (response) {
-                    console.log(response, "Connected pages");
-                    if (response.success) {
-                        var subscribedPages = response.data;
-                        pages.forEach(function (page, i) {
-                            if ($.inArray(page.id, subscribedPages) > -1) {
-                                connectedPages.push(page.id);
-                                pages[i].connected = true;
-                            } else {
-                                pages[i].connected = false;
-                            }
-                        }, this)
+    componentDidMount() {
+        if (this.state.pages.length > 0) {
+            this.setState({
+                loading: false
+            });
+        } else {
+            this.setState({
+                loading: true
+            });
+            this.FB.api(`/${this.uid}/accounts`, function (response) {
+                console.log(response, "/accounts");
+                if (!response || response.error) {
+                    if (response.error) {
+                        console.error(response.error);
                     }
+                } else {
+                    var pages = response.data;
+
                     this.setState({
-                        pages: pages,
-                        connectedPages: connectedPages
+                        pages: pages
                     });
 
-                }.bind(this));
+                    pages.map((page) => {
+                        Uno.saveFBPage({
+                            id: page.id,
+                            name: page.name,
+                            access_token: page.access_token,
+                            user: {
+                                id: this.uid
+                            }
+                        }, function (response) {
+                            console.log(response, "saveFBPage")
+                        });
+                    });
 
-            } else if (response.error) {
-                console.error(response.error);
+                }
+
+                this.setState({
+                    loading: false
+                })
+            }.bind(this));
+
+        }
+    }
+
+    businessSaved(business, page) {
+        console.log(business, "businessSaved");
+        console.log(page, "businessSaved");
+
+        this.FB.api(`/${page.id}/subscribed_apps?access_token=${this.state.accessToken}`, 'post', {access_token: page.access_token}, function (response) {
+            if (!response || response.error) {
+                console.error(response.error.message, "subscribed_apps error");
+            } else {
+                this.setState({
+                    agentConnected: status,
+                    editingBusiness: false
+                });
+                console.log(response, "Subscribed to Page");
             }
         }.bind(this));
     }
 
-    saveBusiness(status) {
-        this.setState({
-            businessSaved: status,
-            editingBusiness: false
-        })
+    cancelBusinessForm() {
+        this.setState({editingBusiness: false});
     }
 
     render() {
         console.log(this.state.pages, "Rendering Pages");
+        if (this.state.loading) {
+            return (
+                <div className="container full-height">
+                    <div className="row">
+                        <div className="progress col s4 offset-s4">
+                            <div className="indeterminate"></div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
         return (
             <div className="valign-wrapper">
                 {
                     this.state.editingBusiness ?
                         <BusinessForm page={this.state.selectedPage} fbUserId={this.uid}
-                                      saveBusiness={this.saveBusiness.bind(this)}/>
+                                      businessSaved={this.businessSaved.bind(this)}
+                                      cancel={this.cancelBusinessForm.bind(this)}/>
                         :
                         <div className="full-height full-width">
-                            <div className="center">
-                                <h5 className="light">Select Pages</h5>
+                            <div className="center section">
+                                <h5 className="light">Select the page to connect to Uno</h5>
                             </div>
-                            <ul className="collection links-list half-width center-block">
-                                {this.state.pages.map((page) =>
-                                    <PageList key={page.id} onPageSelected={this.pageSelected} page={page}/>)}
-                            </ul>
+                            <div className="section">
+                                <ul className="collection links-list center-block no-border pages-ul">
+                                    {this.state.pages.map((page) =>
+                                        <PageList key={page.id} onPageSelected={this.pageSelected.bind(this)}
+                                                  page={page}/>)}
+                                </ul>
+                            </div>
                         </div>
                 }
 

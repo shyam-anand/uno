@@ -23,11 +23,16 @@ public class AgentService {
     @Autowired
     private CategoryService categories;
 
-    public List<Agent> get(String name, String category) {
-        return get(name, categories.get(category));
+    public List<Agent> getAll() {
+        return (List<Agent>) agents.findAll();
     }
 
-    public List<Agent> get(String name, Category category) {
+    public Agent get(int id) {
+        return agents.findOne(id);
+    }
+
+    public List<Agent> get(String name, String categoryName) {
+        Category category = categories.get(categoryName);
         if (category != null || name != null) {
             if (category == null) {
                 return Collections.singletonList(agents.findByName(name));
@@ -37,7 +42,7 @@ public class AgentService {
                 return Collections.singletonList(agents.findByNameAndCategories_name(name, category));
             }
         } else {
-            return (List<Agent>) agents.findAll();
+            return getAll();
         }
     }
 

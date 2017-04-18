@@ -65,8 +65,7 @@ public class GraphAPIRequest<T> {
 
                 String responseString = e.getResponseBodyAsString();
                 ObjectMapper mapper = new ObjectMapper();
-                GraphAPIError graphAPIError = mapper.readValue(responseString, GraphAPIError.class);
-                throw graphAPIError;
+                throw mapper.readValue(responseString, GraphAPIError.class);
             } catch (IOException ex) {
                 throw new GraphApiFailureException(e.getStatusCode(), e.getMessage());
             }

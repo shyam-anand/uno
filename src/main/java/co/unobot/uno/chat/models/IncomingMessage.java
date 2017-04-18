@@ -1,5 +1,6 @@
 package co.unobot.uno.chat.models;
 
+import co.unobot.uno.businesses.models.Business;
 import co.unobot.uno.users.models.User;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -13,6 +14,9 @@ public class IncomingMessage {
 
     @JsonProperty("user")
     private User user;
+
+    @JsonProperty("business")
+    private Business business;
 
     public String getMessage() {
         return message;
@@ -28,5 +32,13 @@ public class IncomingMessage {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Business getBusiness() {
+        return business;
+    }
+
+    public void setBusiness(Business business) {
+        this.business = business;
     }
 }

@@ -11,21 +11,8 @@ export default class Facebook extends React.Component {
         this.FB = props.fb;
         this.hasPagesPerms = false;
 
-        Uno.api("/facebook/config", function (response) {
-            console.log(response, "FB config");
-            if (response.success) {
-                this.appId = response.data.appId;
-                this.version = response.data.version;
-
-                this.FB.init({
-                    appId: this.appId,
-                    xfbml: false,
-                    version: this.version
-                });
-            }
-        }.bind(this));
-
         this.state = {
+            loading: true,
             fbLoginStatus: false,
             accessToken: '',
             uid: '',
@@ -36,6 +23,24 @@ export default class Facebook extends React.Component {
         this.onStatusChange = this.onStatusChange.bind(this);
         this.getPermissions = this.getPermissions.bind(this);
 
+        Uno.api("/facebook/config", function (response, status, xhr) {
+            console.log(response, "FB config");
+            if (status == 'success' && response.success) {
+                this.appId = response.data.appId;
+                this.version = response.data.version;
+
+                this.FB.init({
+                    appId: this.appId,
+                    xfbml: false,
+                    version: this.version
+                });
+
+                this.FB.getLoginStatus(this.onStatusChange);
+            } else {
+                console.error(xhr, 'FB init failed');
+            }
+        }.bind(this));
+
     }
 
     componentWillMount() {
@@ -43,12 +48,14 @@ export default class Facebook extends React.Component {
     }
 
     componentDidMount() {
-        this.FB.getLoginStatus(this.onStatusChange);
         this.FB.Event.subscribe('auth.logout', this.onLogout.bind(this));
-        this.FB.Event.subscribe('auth.statusChange', this.onStatusChange);
+        this.FB.Event.subscribe('auth.statusChange', this.onStatusChange.bind(this));
     }
 
     onStatusChange(response) {
+        this.setState({
+            loading: true
+        });
         console.log(response, "onStatusChange");
 
         if (response.status === "connected") {
@@ -66,6 +73,7 @@ export default class Facebook extends React.Component {
             );
         } else {
             this.setState({
+                loading: false,
                 fbLoginStatus: false
             });
         }
@@ -109,10 +117,12 @@ export default class Facebook extends React.Component {
 
             if (manage_pages && pages_messaging && pages_messaging_subscriptions) {
                 this.setState({
+                    loading: false,
                     hasPagesPerms: true
                 })
             } else {
                 this.setState({
+                    loading: false,
                     hasPagesParams: false
                 })
             }
@@ -135,29 +145,41 @@ export default class Facebook extends React.Component {
     }
 
     render() {
-        return (
-            <div>{
-                this.state.fbLoginStatus === false
-                    ?
-                    <div className="container center valign-wrapper full-height">
-                        <div className="center-block">
-                            <h2 className="thin">Hello.</h2>
-                            <h4 className="thin">Let's build bots!</h4>
-                            <a className="btn-flat blue darken-4 white-text" onClick={this.fbLogin}>Sign in with
-                                Facebook</a>
+        if (this.state.loading) {
+            return (
+                <div className="container full-height">
+                    <div className="row">
+                        <div className="progress col s4 offset-s4">
+                            <div className="indeterminate"></div>
                         </div>
                     </div>
-                    :
-                    <div className="section">
+                </div>
+            );
+        } else {
+            return (
+                <div className="container">{
+                    this.state.fbLoginStatus === false
+                        ?
+                        <div className="container center valign-wrapper full-height">
+                            <div className="center-block">
+                                <h2 className="thin">Hello.</h2>
+                                <h4 className="thin">Let's build bots!</h4>
+                                <a className="btn-flat blue darken-4 white-text" onClick={this.fbLogin}>Sign in with
+                                    Facebook</a>
+                            </div>
+                        </div>
+                        :
                         <div className="row">
                             <div className="col s12">
                                 {
                                     this.state.hasPagesPerms == true ?
-                                        <Pages fb={this.FB} uid={this.state.uid}/> :
+                                        <Pages fb={this.FB} uid={this.state.uid}
+                                               accessToken={this.state.accessToken}/> :
                                         <div className="valign-wrapper full-height full-width">
                                             <div className="center-block center">
                                                 <p>
-                                                    Uno requires permission to manage your pages, so that it can connect
+                                                    Uno requires permission to manage your pages, so that it can
+                                                    connect
                                                     to it and talk to users who message your page.
                                                 </p>
 
@@ -172,8 +194,9 @@ export default class Facebook extends React.Component {
                                 }
                             </div>
                         </div>
-                    </div>
-            }</div>
-        )
+
+                }</div>
+            )
+        }
     }
 }

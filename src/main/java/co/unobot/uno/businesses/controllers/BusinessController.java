@@ -1,5 +1,6 @@
 package co.unobot.uno.businesses.controllers;
 
+import co.unobot.uno.ai.Agent;
 import co.unobot.uno.businesses.models.Business;
 import co.unobot.uno.businesses.services.BusinessService;
 import co.unobot.uno.commons.dto.Response;
@@ -28,14 +29,28 @@ public class BusinessController {
         return new ResponseEntity<>(new Response(true, businesses.getCategories()), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/*", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity createBusiness(@RequestBody BusinessDTO business) {
         return new ResponseEntity<>(new Response(true, getDTO(businesses.create(business))), HttpStatus.OK);
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity get(@RequestParam("fb_page") String fbPageId) {
-        return new ResponseEntity<>(new Response(true, businesses.getForFBPage(fbPageId)), HttpStatus.OK);
+        if (fbPageId != null)
+            return new ResponseEntity<>(new Response(true, businesses.getForFBPage(fbPageId)), HttpStatus.OK);
+        else
+            return new ResponseEntity<>(new Response(true, businesses.getAll()), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/{businessId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity get(@PathVariable("businessId") int businessId) {
+        return new ResponseEntity<>(businesses.get(businessId), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/{businessId}/agent", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity connectAgent(@PathVariable("businessId") int businessId,
+                                       @RequestBody Agent agent) {
+        return new ResponseEntity<>(businesses.connect(businessId, agent), HttpStatus.OK);
     }
 
     private BusinessDTO getDTO(Business business) {

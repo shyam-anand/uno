@@ -7,8 +7,8 @@ export default class Uno {
         Uno.api(`facebook/users/login`, 'POST', user, callback);
     }
 
-    static fbSubscribeToPage(page, callback) {
-        console.log(page, "Uno fbSubscribeToPage");
+    static saveFBPage(page, callback) {
+        console.log(page, "Uno fbPageSelected");
         Uno.api(`facebook/pages/`, 'POST', page, callback);
     }
 

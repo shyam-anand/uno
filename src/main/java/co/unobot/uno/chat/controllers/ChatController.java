@@ -1,8 +1,10 @@
 package co.unobot.uno.chat.controllers;
 
+import co.unobot.uno.ai.AIException;
 import co.unobot.uno.chat.models.IncomingMessage;
 import co.unobot.uno.chat.models.UnoResponse;
 import co.unobot.uno.chat.services.UnoService;
+import co.unobot.uno.commons.dto.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,8 +24,12 @@ public class ChatController {
     private UnoService uno;
 
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<?> getAIResponse(@RequestBody IncomingMessage incomingMessage) {
-        UnoResponse response = uno.getResponse(incomingMessage);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+    public ResponseEntity getAIResponse(@RequestBody IncomingMessage incomingMessage) {
+        try {
+            UnoResponse response = uno.getAIResponse(incomingMessage.getBusiness().getAgent(), incomingMessage.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (AIException e) {
+            return new ResponseEntity<>(new Response(false, e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
