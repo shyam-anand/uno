@@ -16,6 +16,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.validation.constraints.NotNull;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -35,12 +37,15 @@ public class UnoService {
     @Autowired
     private BusinessService businesses;
 
-    public void messageFromFB(Message incomingFbMessage, FBUser fbUser, FBPage fbPage) {
+    public void messageFromFB(@NotNull Message incomingFbMessage, @NotNull FBUser fbUser, @NotNull FBPage fbPage) {
 
         String mid = incomingFbMessage.getMid();
         int sequence = incomingFbMessage.getSeq();
         String message = incomingFbMessage.getText();
         List<Attachment> attachments = incomingFbMessage.getAttachments();
+        if (attachments == null) {
+            attachments = Collections.emptyList();
+        }
 
         logger.info("[FacebookMessage] {} {} {} {} {} \"{}\"", fbUser.getId(), fbPage.getId(), mid, sequence, attachments.size(), message);
 

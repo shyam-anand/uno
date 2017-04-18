@@ -54,7 +54,11 @@ public class BusinessService {
     }
 
     private Business save(Business business) {
-        return businesses.save(business);
+        try {
+            return businesses.save(business);
+        } catch (Exception e) {
+            throw e;
+        }
     }
 
     public List<Business> getAll() {
