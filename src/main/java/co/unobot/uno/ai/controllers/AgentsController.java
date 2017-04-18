@@ -25,12 +25,11 @@ public class AgentsController {
     public ResponseEntity create(@RequestBody Agent agent) {
         return new ResponseEntity<>(new Response(true, agents.add(agent)), HttpStatus.OK);
     }
-    @RequestMapping(value = "", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+
+    @RequestMapping(value = "/add", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity createMultiple(@RequestBody List<Agent> agentList) {
         return new ResponseEntity<>(new Response(true, agents.addAll(agentList)), HttpStatus.OK);
     }
-
-
 
     @RequestMapping(value = "", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity get(@RequestParam(value = "name", required = false) String name,
