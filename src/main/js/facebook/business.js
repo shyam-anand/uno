@@ -139,8 +139,8 @@ export default class BusinessForm extends React.Component {
                             </div>
                             <div className="row">
                                 <div className="col s3 offset-s4">
-                                    <button className="btn gray darken-4 col s12" onClick={this.props.cancel}>
-                                        Save
+                                    <button className="btn grey lighten-2 col s12" onClick={this.props.cancel}>
+                                        Cancel
                                     </button>
                                 </div>
                                 <div className="col s3 offset-s1">

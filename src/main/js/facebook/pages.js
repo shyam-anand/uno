@@ -21,7 +21,6 @@ class PageList extends React.Component {
         FB.api(
             `/${this.page.id}/picture?height=42&width=42`,
             function (response) {
-                console.log(response, `${this.page.id}/picture`);
                 if (response && !response.error) {
                     this.setState({
                         img: response.data.url

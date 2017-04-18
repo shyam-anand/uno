@@ -23,7 +23,7 @@ public class FBPageController {
     public ResponseEntity subscribe(@RequestBody FBPage page) {
 
         pages.subscribe(page);
-        return new ResponseEntity<>(new Response(true, "Subscribed to " + page.getId()), HttpStatus.OK);
+        return new ResponseEntity<>(new Response(true, "Saved " + page.getId()), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{userId}", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
