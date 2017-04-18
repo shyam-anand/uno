@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityNotFoundException;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by shyam on 17/04/17.
@@ -71,5 +72,9 @@ public class AgentService {
             a.setDescription(agent.getDescription());
         }
         return agents.save(a);
+    }
+
+    public List<Agent> addAll(List<Agent> agentList) {
+        return agentList.stream().map(agents::save).collect(Collectors.toList());
     }
 }
