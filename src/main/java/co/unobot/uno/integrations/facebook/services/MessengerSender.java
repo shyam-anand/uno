@@ -28,6 +28,7 @@ public class MessengerSender {
     private FBPagesService pages;
 
     public void send(String messageText, FBUser user, FBPage page) {
+        logger.info("[Sending] {} {} {}", user.getId(), page.getId(), messageText);
         FBOutgoingMessage outgoingMessage = new FBOutgoingMessage(user.getId(), messageText);
 
         try {

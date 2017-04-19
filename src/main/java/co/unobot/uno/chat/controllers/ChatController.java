@@ -26,7 +26,7 @@ public class ChatController {
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity getAIResponse(@RequestBody IncomingMessage incomingMessage) {
         try {
-            UnoResponse response = uno.getAIResponse(incomingMessage.getBusiness().getAgent(), incomingMessage.getMessage());
+            UnoResponse response = uno.getAIResponse(incomingMessage.getBusiness().getAgent(), incomingMessage.getMessage(), incomingMessage.getBusiness().getName(), incomingMessage.getBusiness().getId());
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (AIException e) {
             return new ResponseEntity<>(new Response(false, e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);

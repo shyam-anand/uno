@@ -18,7 +18,9 @@ import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotNull;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by shyam on 02/04/17.
@@ -54,15 +56,18 @@ public class UnoService {
 
         //TODO Logging, user profiling, etc
         try {
-            UnoResponse response = getAIResponse(agent, message);
+            UnoResponse response = getAIResponse(agent, message, business.getName(), business.getId());
             messenger.send(response.getMessage(), fbUser, fbPage);
         } catch (AIException e) {
             logger.error(e.getMessage());
         }
     }
 
-    public UnoResponse getAIResponse(Agent agent, String message) throws AIException {
-        return new UnoResponse().fromAIResult(aiService.request(agent, message));
+    public UnoResponse getAIResponse(Agent agent, String message, String businessName, Integer businessId) throws AIException {
+        Map<String, String> context = new HashMap<>();
+        context.put("business-name", businessName);
+        context.put("business-id", String.valueOf(businessId));
+        return new UnoResponse().fromAIResult(aiService.request(agent, message, context));
     }
 
 }

@@ -11,7 +11,8 @@ class PageList extends React.Component {
 
         this.state = {
             img: '',
-            connected: false
+            connected: false,
+            agent: null
         };
 
         this.onListItemClicked = this.onListItemClicked.bind(this);
@@ -30,9 +31,11 @@ class PageList extends React.Component {
         );
 
         Uno.api(`/facebook/pages/${this.page.id}/agent`, function (response, status, xhr) {
+            console.log(response, `${this.page.name}/agent`);
             if (response) {
                 this.setState({
-                    connected: true
+                    connected: true,
+                    agent: response
                 })
             }
         }.bind(this));
@@ -51,7 +54,7 @@ class PageList extends React.Component {
 
                 <p className="grey-text">{this.page.category}</p>
                 {this.state.connected ?
-                    <a href="#!" className="secondary-content"><i className="material-icons">done</i></a> : ''}
+                    <a href="#!" className="secondary-content">{this.state.agent.name}</a> : ''}
 
             </li>
         );
