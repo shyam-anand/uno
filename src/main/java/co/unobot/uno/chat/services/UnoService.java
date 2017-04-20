@@ -27,7 +27,7 @@ import java.util.*;
 
 /**
  * @author Shyam Anand (shyamwdr@gmail.com)
- * 02/04/17
+ *         02/04/17
  */
 @Service
 public class UnoService {
@@ -76,6 +76,9 @@ public class UnoService {
                 switch (agentAction.category()) {
                     case DELIVERY:
                         handleDeliveryAction();
+                        break;
+                    default:
+                        messenger.sendTextMessage(response.getMessage(), fbUser, fbPage);
                 }
             }
         } catch (AIException e) {
@@ -85,7 +88,7 @@ public class UnoService {
 
     private void handleDeliveryAction() {
 
-        String text = "Sorry, working in progress! Check back soon!";
+        String text = response.getMessage().equals("") ? "Sorry, working in progress! Check back soon!" : response.getMessage();
         List<PostbackButton> buttons = new ArrayList<>();
         switch (response.getAction()) {
             case DELIVERY_PRODUCT_ADD:
