@@ -4,6 +4,7 @@ import ai.api.model.Result;
 import co.unobot.uno.ai.AIException;
 import co.unobot.uno.ai.Agent;
 import co.unobot.uno.ai.services.AIService;
+import co.unobot.uno.ai.services.AgentService;
 import co.unobot.uno.businesses.models.Business;
 import co.unobot.uno.businesses.services.BusinessService;
 import co.unobot.uno.chat.models.AgentAction;
@@ -43,6 +44,9 @@ public class UnoService {
     @Autowired
     private BusinessService businesses;
 
+    @Autowired
+    private AgentService agents;
+
     private FBUser fbUser;
     private FBPage fbPage;
     private UnoResponse response;
@@ -70,8 +74,18 @@ public class UnoService {
             response = getAIResponse(agent, message, business.getName(), business.getId());
 
             AgentAction agentAction = response.getAction();
+
             if (agentAction == null || agentAction.category().equals(AgentActionCategory.SMALLTALK)) {
-                messenger.sendTextMessage(response.getMessage(), fbUser, fbPage);
+                String messageText = response.getMessage();
+                if (messageText == null || messageText.isEmpty()) {
+                    Agent smallTalk = agents.get("SmallTalk", null).get(0);
+                    response = getAIResponse(agent, message, business.getName(), business.getId());
+                    messageText = response.getMessage();
+                } else {
+                    messageText = "I couldn't understand that. Sorry.";
+                }
+
+                messenger.sendTextMessage(messageText, fbUser, fbPage);
             } else {
                 switch (agentAction.category()) {
                     case DELIVERY:
