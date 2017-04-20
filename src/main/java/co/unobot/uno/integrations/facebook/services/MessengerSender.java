@@ -10,6 +10,7 @@ import co.unobot.uno.integrations.facebook.models.message.Attachment;
 import co.unobot.uno.integrations.facebook.models.message.AttachmentType;
 import co.unobot.uno.integrations.facebook.models.message.outgoing.FBOutgoingMessage;
 import co.unobot.uno.integrations.facebook.models.message.outgoing.Message;
+import co.unobot.uno.integrations.facebook.models.message.outgoing.Recipient;
 import co.unobot.uno.integrations.facebook.models.message.templates.Template;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +50,7 @@ public class MessengerSender {
 
         FBOutgoingMessage outgoingMessage = new FBOutgoingMessage();
         outgoingMessage.setMessage(message);
+        outgoingMessage.setRecipient(new Recipient(user));
 
         send(outgoingMessage, page);
     }

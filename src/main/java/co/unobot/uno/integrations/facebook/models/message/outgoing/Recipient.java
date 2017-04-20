@@ -1,5 +1,6 @@
 package co.unobot.uno.integrations.facebook.models.message.outgoing;
 
+import co.unobot.uno.integrations.facebook.models.FBUser;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -14,6 +15,14 @@ public class Recipient {
     private String phoneNumber;
 
     private String name;
+
+    public Recipient() {
+    }
+
+    public Recipient(FBUser user) {
+        id = user.getId();
+        name = user.getName();
+    }
 
     public String getId() {
         return id;
