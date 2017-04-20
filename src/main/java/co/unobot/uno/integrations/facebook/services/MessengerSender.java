@@ -35,17 +35,7 @@ public class MessengerSender {
         logger.info("[Sending] {} {} {}", user.getId(), page.getId(), messageText);
         FBOutgoingMessage outgoingMessage = new FBOutgoingMessage(user.getId(), messageText);
 
-        try {
-            facebook.sendMessage(outgoingMessage, page.getAccessToken());
-        } catch (GraphAPIError error) {
-            if (error.getCode() == GraphAPIErrorCode.CODE_INVALID_ACCESS_TOKEN.code()
-                    && error.getSubCode() == GraphAPIErrorCode.SUBCODE_SESSION_EXPIRED.code()) {
-                page = pages.renewAccessToken(page);
-                sendTextMessage(messageText, user, page);
-            }
-        } catch (GraphApiFailureException e) {
-            logger.error("Message sending failed: " + e.getMessage());
-        }
+        send(outgoingMessage, page);
     }
 
     public void sendTemplateMessage(Template template, FBUser user, FBPage page) {
@@ -59,5 +49,21 @@ public class MessengerSender {
 
         FBOutgoingMessage outgoingMessage = new FBOutgoingMessage();
         outgoingMessage.setMessage(message);
+
+        send(outgoingMessage, page);
+    }
+
+    private void send(final FBOutgoingMessage outgoingMessage, FBPage page) {
+        try {
+            facebook.sendMessage(outgoingMessage, page.getAccessToken());
+        } catch (GraphAPIError error) {
+            if (error.getCode() == GraphAPIErrorCode.CODE_INVALID_ACCESS_TOKEN.code()
+                    && error.getSubCode() == GraphAPIErrorCode.SUBCODE_SESSION_EXPIRED.code()) {
+                page = pages.renewAccessToken(page);
+                send(outgoingMessage, page);
+            }
+        } catch (GraphApiFailureException e) {
+            logger.error("Message sending failed: " + e.getMessage());
+        }
     }
 }
