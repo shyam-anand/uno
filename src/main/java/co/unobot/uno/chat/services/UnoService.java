@@ -121,6 +121,7 @@ public class UnoService {
                     payload.put("action", "confirm");
                     payload.put("parameters", response.getParameters());
                     confirmButton.setPayload(payload.toString());
+                    confirmButton.setTitle("Confirm");
 
                     buttons.add(confirmButton);
                 }

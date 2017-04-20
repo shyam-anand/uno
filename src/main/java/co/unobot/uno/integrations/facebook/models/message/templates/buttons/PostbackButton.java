@@ -6,12 +6,11 @@ package co.unobot.uno.integrations.facebook.models.message.templates.buttons;
  */
 public class PostbackButton extends Button {
 
-    private final ButtonType type = ButtonType.POSTBACK;
     private String title;
     private Object payload;
 
-    public ButtonType getType() {
-        return type;
+    public PostbackButton() {
+        super(ButtonType.POSTBACK);
     }
 
     public String getTitle() {
