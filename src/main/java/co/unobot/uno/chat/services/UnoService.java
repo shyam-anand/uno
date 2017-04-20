@@ -127,7 +127,7 @@ public class UnoService {
                                 Map<String, JsonElement> contextParams = context.getParameters();
                                 Map<String, Object> params = new HashMap<>();
 
-                                Map<String, String> values = new HashMap<>();
+                                Map<String, Object> values = new HashMap<>();
                                 contextParams.forEach((key, value) -> {
                                     if (!key.contains(".original") && value != null) {
                                         logger.info(key + " -> " + value);
@@ -136,9 +136,13 @@ public class UnoService {
                                             values.put(key, value.getAsString());
                                         } else {
                                             if (value.isJsonArray()) {
-                                                value.getAsJsonArray().forEach(v -> values.putAll(extractParameters(v, contextParams.get(key.concat(".original")))));
+                                                List<String> vs = new ArrayList<>();
+                                                value.getAsJsonArray().forEach(jsonElement -> vs.add(jsonElement.getAsString()));
+                                                values.put(key, vs);
+//                                                value.getAsJsonArray().forEach(v -> values.putAll(extractParameters(v, contextParams.get(key.concat(".original")))));
                                             } else {
-                                                values.putAll(extractParameters(value, contextParams.get(key.concat(".original"))));
+//                                                values.putAll(extractParameters(value, contextParams.get(key.concat(".original"))));
+                                                values.put(key, value.getAsString());
                                             }
                                         }
                                     }
