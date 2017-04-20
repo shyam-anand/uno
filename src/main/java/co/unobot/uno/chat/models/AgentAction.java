@@ -35,6 +35,11 @@ public enum AgentAction {
     }
 
     public static AgentAction fromString(String action) {
+
+        if (!action.contains(".")) {
+            throw new IllegalArgumentException("Invalid value '" + action + "'");
+        }
+
         String[] actionParts = action.split("\\.", 2);
         String cat = actionParts[0];
         String act = actionParts[1];
