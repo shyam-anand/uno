@@ -111,10 +111,16 @@ public class UnoService {
 
                 Map<String, Object> deliveryParams = response.getParameters().get("delivery");
                 if (!deliveryParams.isEmpty() && deliveryParams.containsKey("product")) {
-                    StringBuilder content = new StringBuilder("Please confirm your order");
+                    StringBuilder content = new StringBuilder("Please confirm your order\n");
 
-                    List<String> products = (List<String>) deliveryParams.get("product");
-                    products.forEach(product -> content.append("\n").append(product));
+                    ListIterator<String> products = ((List<String>) deliveryParams.get("product")).listIterator();
+
+                    while (products.hasNext()) {
+                        content
+                                .append("\n")
+                                .append(products.nextIndex()).append("] ")
+                                .append(products.next());
+                    }
                     text = content.toString();
                     PostbackButton confirmButton = new PostbackButton();
                     Map<String, Object> payload = new HashMap<>();
