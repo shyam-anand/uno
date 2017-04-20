@@ -51,15 +51,9 @@ public class UnoResponse {
     }
 
     public void setAction(String action) {
-        String[] actionParts = action.split("\\.");
-        String cat = actionParts[0];
-        String act = "";
-        for (int i = 1; i < actionParts.length; i++) {
-            act += actionParts[i];
-            if (actionParts[i + 1] != null) {
-                act += ".";
-            }
-        }
+        String[] parts = action.split("\\.");
+        String cat = parts[0];
+        String act = parts[1];
         for (AgentAction agentAction : AgentAction.values()) {
             if (agentAction.category().name().equals(cat) && agentAction.action().equals(act)) {
                 this.action = agentAction;
