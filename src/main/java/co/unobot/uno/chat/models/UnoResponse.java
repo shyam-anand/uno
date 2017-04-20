@@ -53,8 +53,9 @@ public class UnoResponse {
     public void setAction(String action) {
         if (action == null || action.isEmpty() || action.equals("") || !action.contains(".") || action.equals("null")) {
             this.action = null;
+        } else {
+            this.action = AgentAction.fromString(action);
         }
-        this.action = AgentAction.fromString(action);
     }
 
     public Map<String, Object> getParameters() {
