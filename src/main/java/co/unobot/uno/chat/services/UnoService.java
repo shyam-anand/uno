@@ -6,11 +6,15 @@ import co.unobot.uno.ai.Agent;
 import co.unobot.uno.ai.services.AIService;
 import co.unobot.uno.businesses.models.Business;
 import co.unobot.uno.businesses.services.BusinessService;
+import co.unobot.uno.chat.models.AgentAction;
+import co.unobot.uno.chat.models.AgentActionCategory;
 import co.unobot.uno.chat.models.UnoResponse;
 import co.unobot.uno.integrations.facebook.models.FBPage;
 import co.unobot.uno.integrations.facebook.models.FBUser;
 import co.unobot.uno.integrations.facebook.models.message.Attachment;
 import co.unobot.uno.integrations.facebook.models.message.incoming.Message;
+import co.unobot.uno.integrations.facebook.models.message.templates.ButtonTemplate;
+import co.unobot.uno.integrations.facebook.models.message.templates.buttons.PostbackButton;
 import co.unobot.uno.integrations.facebook.services.MessengerSender;
 import com.google.gson.JsonElement;
 import org.slf4j.Logger;
@@ -19,13 +23,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotNull;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
- * Created by shyam on 02/04/17.
+ * @author Shyam Anand (shyamwdr@gmail.com)
+ * 02/04/17
  */
 @Service
 public class UnoService {
@@ -41,7 +43,14 @@ public class UnoService {
     @Autowired
     private BusinessService businesses;
 
+    private FBUser fbUser;
+    private FBPage fbPage;
+    private UnoResponse response;
+
     public void messageFromFB(@NotNull Message incomingFbMessage, @NotNull FBUser fbUser, @NotNull FBPage fbPage) {
+
+        this.fbPage = fbPage;
+        this.fbUser = fbUser;
 
         String mid = incomingFbMessage.getMid();
         int sequence = incomingFbMessage.getSeq();
@@ -58,11 +67,41 @@ public class UnoService {
 
         //TODO Logging, user profiling, etc
         try {
-            UnoResponse response = getAIResponse(agent, message, business.getName(), business.getId());
-            messenger.send(response.getMessage(), fbUser, fbPage);
+            response = getAIResponse(agent, message, business.getName(), business.getId());
+
+            AgentAction agentAction = response.getAction();
+            if (agentAction.category().equals(AgentActionCategory.SMALLTALK)) {
+                messenger.sendTextMessage(response.getMessage(), fbUser, fbPage);
+            } else {
+                switch (agentAction.category()) {
+                    case DELIVERY:
+                        handleDeliveryAction();
+                }
+            }
         } catch (AIException e) {
             logger.error(e.getMessage());
         }
+    }
+
+    private void handleDeliveryAction() {
+
+        String text = "Sorry, working in progress! Check back soon!";
+        List<PostbackButton> buttons = new ArrayList<>();
+        switch (response.getAction()) {
+            case DELIVERY_PRODUCT_ADD:
+                text = "Please confirm your order";
+                PostbackButton confirmButton = new PostbackButton();
+                Map<String, Object> payload = new HashMap<>();
+                payload.put("action", "confirm");
+                payload.put("parameters", response.getParameters());
+                confirmButton.setPayload(payload);
+                break;
+        }
+
+        ButtonTemplate<PostbackButton> template = new ButtonTemplate<>();
+        template.setText(text);
+        template.setButtons(buttons);
+        messenger.sendTemplateMessage(template, fbUser, fbPage);
     }
 
     public UnoResponse getAIResponse(Agent agent, String message, String businessName, Integer businessId) throws AIException {
@@ -78,7 +117,7 @@ public class UnoService {
         unoResponse.setScore(result.getScore());
         unoResponse.setMessage(result.getFulfillment().getSpeech());
 
-        if (!unoResponse.getAction().equals("smalltalk.greetings") && result.getContexts() != null && !result.getContexts().isEmpty()) {
+        if (!unoResponse.getAction().equals(AgentAction.SMALLTALK_GREETINGS) && result.getContexts() != null && !result.getContexts().isEmpty()) {
             unoResponse.setParameters(
                     result.getContexts().stream().map(
                             context -> {

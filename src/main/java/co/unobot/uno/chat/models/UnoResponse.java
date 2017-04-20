@@ -15,7 +15,7 @@ public class UnoResponse {
     private String message;
 
     @JsonProperty("action")
-    private String action;
+    private AgentAction action;
 
     @JsonProperty("score")
     private float score;
@@ -42,12 +42,16 @@ public class UnoResponse {
         this.score = score;
     }
 
-    public String getAction() {
+    public AgentAction getAction() {
         return action;
     }
 
-    public void setAction(String action) {
+    public void setAction(AgentAction action) {
         this.action = action;
+    }
+
+    public void setAction(String action) {
+        this.action = AgentAction.valueOf(action);
     }
 
     public Map<String, Object> getParameters() {
