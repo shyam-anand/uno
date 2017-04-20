@@ -15,7 +15,8 @@ export default class BusinessForm extends React.Component {
             description: '',
             address: '',
             business: null,
-            screen: 'pages'
+            screen: 'pages',
+            errorMessage: ''
         };
 
         this.handleChange = this.handleChange.bind(this);
@@ -36,23 +37,33 @@ export default class BusinessForm extends React.Component {
         e.preventDefault();
         e.stopPropagation();
 
-        Uno.api("/businesses/", 'POST', {
-            name: this.state.name,
-            category: this.state.category,
-            description: this.state.description,
-            address: this.state.address,
-            fb_page_id: this.page.id,
-            fb_user_id: this.fbUserId
-        }, function (response) {
-            console.log(response, "Create business");
-            if (response.success) {
-                //this.saveBusiness(true);
-                this.setState({
-                    business: response.data,
-                    screen: 'agents'
-                })
-            }
-        }.bind(this))
+        if (this.state.category == 0 || this.state.category == "0") {
+            this.setState({
+                errorMessage: 'Please select a category'
+            })
+        } else {
+
+            this.setState({
+                errorMessage: ''
+            });
+            Uno.api("/businesses/", 'POST', {
+                name: this.state.name,
+                category: this.state.category,
+                description: this.state.description,
+                address: this.state.address,
+                fb_page_id: this.page.id,
+                fb_user_id: this.fbUserId
+            }, function (response) {
+                console.log(response, "Create business");
+                if (response.success) {
+                    //this.saveBusiness(true);
+                    this.setState({
+                        business: response.data,
+                        screen: 'agents'
+                    })
+                }
+            }.bind(this));
+        }
     }
 
     componentDidMount() {
@@ -148,6 +159,11 @@ export default class BusinessForm extends React.Component {
                                             name="save_business">
                                         Save
                                     </button>
+                                </div>
+                            </div>
+                            <div className="row">
+                                <div className="col s12">
+                                    <div className="center red-text">{this.state.errorMessage}</div>
                                 </div>
                             </div>
                         </form>
