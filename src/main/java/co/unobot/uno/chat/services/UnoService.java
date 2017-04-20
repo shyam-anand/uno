@@ -79,7 +79,7 @@ public class UnoService {
                 String messageText = response.getMessage();
                 if (messageText == null || messageText.isEmpty()) {
                     Agent smallTalk = agents.get("SmallTalk", null).get(0);
-                    response = getAIResponse(agent, message, business.getName(), business.getId());
+                    response = getAIResponse(smallTalk, message, business.getName(), business.getId());
                     messageText = response.getMessage();
                 } else {
                     messageText = "I couldn't understand that. Sorry.";
