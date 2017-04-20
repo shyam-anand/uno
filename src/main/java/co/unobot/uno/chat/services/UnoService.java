@@ -1,5 +1,6 @@
 package co.unobot.uno.chat.services;
 
+import ai.api.model.Result;
 import co.unobot.uno.ai.AIException;
 import co.unobot.uno.ai.Agent;
 import co.unobot.uno.ai.services.AIService;
@@ -11,6 +12,7 @@ import co.unobot.uno.integrations.facebook.models.FBUser;
 import co.unobot.uno.integrations.facebook.models.message.Attachment;
 import co.unobot.uno.integrations.facebook.models.message.incoming.Message;
 import co.unobot.uno.integrations.facebook.services.MessengerSender;
+import com.google.gson.JsonElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,7 +69,56 @@ public class UnoService {
         Map<String, String> context = new HashMap<>();
         context.put("business-name", businessName);
         context.put("business-id", String.valueOf(businessId));
-        return new UnoResponse().fromAIResult(aiService.request(agent, message, context));
+        return fromAIResult(aiService.request(agent, message, context));
+    }
+
+    public UnoResponse fromAIResult(Result result) {
+        UnoResponse unoResponse = new UnoResponse();
+        unoResponse.setAction(result.getAction());
+        unoResponse.setScore(result.getScore());
+        unoResponse.setMessage(result.getFulfillment().getSpeech());
+
+        if (!unoResponse.getAction().equals("smalltalk.greetings") && result.getContexts() != null && !result.getContexts().isEmpty()) {
+            unoResponse.setParameters(
+                    result.getContexts().stream().map(
+                            context -> {
+                                Map<String, JsonElement> contextParams = context.getParameters();
+                                Map<String, Object> params = new HashMap<>();
+
+                                Map<String, String> values = new HashMap<>();
+                                contextParams.forEach((key, value) -> {
+                                    if (!key.contains(".original") && value != null) {
+                                        logger.info(key + " -> " + value);
+
+                                        if (key.equals("business-name") || key.equals("business-id")) {
+                                            values.put(key, value.getAsString());
+                                        } else {
+                                            if (value.isJsonArray()) {
+                                                value.getAsJsonArray().forEach(v -> values.putAll(extractParameters(v, contextParams.get(key.concat(".original")))));
+                                            } else {
+                                                values.putAll(extractParameters(value, contextParams.get(key.concat(".original"))));
+                                            }
+                                        }
+                                    }
+                                });
+                                params.put(context.getName(), values);
+                                return params;
+                            }
+                    ).reduce(null, (a, b) -> b)
+            );
+        }
+
+        unoResponse.getParameters().forEach((key, value) -> {
+            logger.info(key + " -> " + value.toString());
+        });
+        return unoResponse;
+    }
+
+    private Map<String, String> extractParameters(JsonElement value, JsonElement originalElement) {
+        Map<String, String> element = new HashMap<>();
+        String original = (originalElement == null) ? null : originalElement.getAsString();
+        element.put(value.getAsString(), original);
+        return element;
     }
 
 }
