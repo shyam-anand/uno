@@ -11,12 +11,13 @@ public enum AgentAction {
      */
     SMALLTALK_WELCOME("smalltalk", "welcome"),
     SMALLTALK_GREETINGS("smalltalk", "greetings"),
+    SMALLTALK_CANNOT_DO("smalltalk", "cannot-do"),
     /**
      * Food-Delivery Agent
      */
     DELIVERY_ORDER_ADD("delivery", "order.add"),
     DELIVERY_ORDER_CHECK("delivery", "order.check"),
-    DELIVERY_ORDER_CHECK_STATUS("delivery.order", "check_status"),
+    DELIVERY_ORDER_CHECK_STATUS("delivery", "order.check_status"),
     DELIVERY_ORDER_REMOVE("delivery", "order.remove"),
     DELIVERY_PRODUCT_ADD("delivery", "product.add"),
     DELIVERY_PRODUCT_REMOVE("delivery", "product.remove"),
@@ -28,21 +29,16 @@ public enum AgentAction {
     private String name;
 
     AgentAction(String category, String action) {
-        this.category = AgentActionCategory.valueOf(category);
+        this.category = AgentActionCategory.fromString(category);
         this.action = action;
         this.name = String.format("%s.%s", category, action);
     }
 
     public static AgentAction fromString(String action) {
-        String[] actionParts = action.split("\\.");
+        String[] actionParts = action.split("\\.", 2);
         String cat = actionParts[0];
-        String act = "";
-        for (int i = 1; i < actionParts.length; i++) {
-            act += actionParts[i];
-            if (actionParts[i + 1] != null) {
-                act += ".";
-            }
-        }
+        String act = actionParts[1];
+
         for (AgentAction agentAction : values()) {
             if (agentAction.category.compareTo(AgentActionCategory.fromString(cat)) == 0 && agentAction.action.equals(act)) {
                 return agentAction;
