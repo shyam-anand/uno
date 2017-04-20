@@ -108,9 +108,6 @@ public class UnoService {
             );
         }
 
-        unoResponse.getParameters().forEach((key, value) -> {
-            logger.info(key + " -> " + value.toString());
-        });
         return unoResponse;
     }
 
