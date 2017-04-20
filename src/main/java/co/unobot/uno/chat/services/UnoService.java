@@ -114,15 +114,13 @@ public class UnoService {
                     StringBuilder content = new StringBuilder("Please confirm your order");
 
                     List<String> products = (List<String>) deliveryParams.get("product");
-                    products.forEach(product -> {
-                        content.append("\n").append(product);
-                    });
+                    products.forEach(product -> content.append("\n").append(product));
                     text = content.toString();
                     PostbackButton confirmButton = new PostbackButton();
                     Map<String, Object> payload = new HashMap<>();
                     payload.put("action", "confirm");
                     payload.put("parameters", response.getParameters());
-                    confirmButton.setPayload(payload);
+                    confirmButton.setPayload(payload.toString());
 
                     buttons.add(confirmButton);
                 }
