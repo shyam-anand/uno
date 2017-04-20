@@ -51,14 +51,7 @@ public class UnoResponse {
     }
 
     public void setAction(String action) {
-        String[] parts = action.split("\\.");
-        String cat = parts[0];
-        String act = parts[1];
-        for (AgentAction agentAction : AgentAction.values()) {
-            if (agentAction.category().name().equals(cat) && agentAction.action().equals(act)) {
-                this.action = agentAction;
-            }
-        }
+        this.action = AgentAction.fromString(action);
     }
 
     public Map<String, Object> getParameters() {

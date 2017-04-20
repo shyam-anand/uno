@@ -18,4 +18,14 @@ public enum AgentActionCategory {
     public String toString() {
         return name;
     }
+
+    public static AgentActionCategory fromString(String value) {
+        for (AgentActionCategory aac : values()) {
+            if (aac.name.equalsIgnoreCase(value)) {
+                return aac;
+            }
+        }
+
+        throw new IllegalArgumentException("No constant with value " + value);
+    }
 }

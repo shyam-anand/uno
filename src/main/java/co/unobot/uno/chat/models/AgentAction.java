@@ -44,12 +44,12 @@ public enum AgentAction {
             }
         }
         for (AgentAction agentAction : values()) {
-            if (agentAction.category.name().equals(cat) && agentAction.action.equals(act)) {
+            if (agentAction.category.compareTo(AgentActionCategory.fromString(cat)) == 0 && agentAction.action.equals(act)) {
                 return agentAction;
             }
         }
 
-        return null;
+        throw new IllegalArgumentException("No constant with value " + action);
     }
 
     public AgentActionCategory category() {
