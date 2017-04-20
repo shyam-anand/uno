@@ -21,7 +21,7 @@ public class UnoResponse {
     private float score;
 
     @JsonProperty("parameters")
-    private Map<String, Object> parameters;
+    private Map<String, Map<String, Object>> parameters;
 
     public UnoResponse() {
     }
@@ -58,11 +58,11 @@ public class UnoResponse {
         }
     }
 
-    public Map<String, Object> getParameters() {
+    public Map<String, Map<String, Object>> getParameters() {
         return parameters;
     }
 
-    public void setParameters(Map<String, Object> parameters) {
+    public void setParameters(Map<String, Map<String, Object>> parameters) {
         this.parameters = parameters;
     }
 }

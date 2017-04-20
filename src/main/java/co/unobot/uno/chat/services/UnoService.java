@@ -106,19 +106,37 @@ public class UnoService {
         List<PostbackButton> buttons = new ArrayList<>();
         switch (response.getAction()) {
             case DELIVERY_PRODUCT_ADD:
-                text = "Please confirm your order";
-                PostbackButton confirmButton = new PostbackButton();
-                Map<String, Object> payload = new HashMap<>();
-                payload.put("action", "confirm");
-                payload.put("parameters", response.getParameters());
-                confirmButton.setPayload(payload);
+            case DELIVERY_SEARCH:
+            case DELIVERY_ORDER_ADD:
+
+                Map<String, Object> deliveryParams = response.getParameters().get("delivery");
+                if (!deliveryParams.isEmpty() && deliveryParams.containsKey("product")) {
+                    StringBuilder content = new StringBuilder("Please confirm your order");
+
+                    List<String> products = (List<String>) deliveryParams.get("product");
+                    products.forEach(product -> {
+                        content.append("\n").append(product);
+                    });
+                    text = content.toString();
+                    PostbackButton confirmButton = new PostbackButton();
+                    Map<String, Object> payload = new HashMap<>();
+                    payload.put("action", "confirm");
+                    payload.put("parameters", response.getParameters());
+                    confirmButton.setPayload(payload);
+
+                    buttons.add(confirmButton);
+                }
                 break;
         }
 
-        ButtonTemplate<PostbackButton> template = new ButtonTemplate<>();
-        template.setText(text);
-        template.setButtons(buttons);
-        messenger.sendTemplateMessage(template, fbUser, fbPage);
+        if (buttons.isEmpty()) {
+            messenger.sendTextMessage(text, fbUser, fbPage);
+        } else {
+            ButtonTemplate<PostbackButton> template = new ButtonTemplate<>();
+            template.setText(text);
+            template.setButtons(buttons);
+            messenger.sendTemplateMessage(template, fbUser, fbPage);
+        }
     }
 
     public UnoResponse getAIResponse(Agent agent, String message, String businessName, Integer businessId) throws AIException {
@@ -138,13 +156,15 @@ public class UnoService {
             unoResponse.setParameters(
                     result.getContexts().stream().map(
                             context -> {
+                                String contextName = context.getName();
+                                logger.info("[{}]", contextName);
                                 Map<String, JsonElement> contextParams = context.getParameters();
-                                Map<String, Object> params = new HashMap<>();
+                                Map<String, Map<String, Object>> params = new HashMap<>();
 
                                 Map<String, Object> values = new HashMap<>();
                                 contextParams.forEach((key, value) -> {
                                     if (!key.contains(".original") && value != null) {
-                                        logger.info(key + " -> " + value);
+                                        logger.info("[{}] {} -> {}", contextName, key, value);
 
                                         if (key.equals("business-name") || key.equals("business-id")) {
                                             values.put(key, value.getAsString());
@@ -164,7 +184,16 @@ public class UnoService {
                                 params.put(context.getName(), values);
                                 return params;
                             }
-                    ).reduce(null, (a, b) -> b)
+                    ).reduce(new HashMap<>(), (a, b) -> {
+                        if (a.isEmpty()) {
+                            return b;
+                        } else {
+                            Map<String, Map<String, Object>> c = new HashMap<>();
+                            c.putAll(a);
+                            c.putAll(b);
+                            return c;
+                        }
+                    })
             );
         }
 
