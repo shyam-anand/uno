@@ -51,7 +51,7 @@ public class UnoResponse {
     }
 
     public void setAction(String action) {
-        if (action == null || action.equals("null")) {
+        if (action == null || action.isEmpty() || !action.contains(".") || action.equals("null")) {
             this.action = null;
         }
         this.action = AgentAction.fromString(action);
