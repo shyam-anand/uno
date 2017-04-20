@@ -33,6 +33,25 @@ public enum AgentAction {
         this.name = String.format("%s.%s", category, action);
     }
 
+    public static AgentAction fromString(String action) {
+        String[] actionParts = action.split("\\.");
+        String cat = actionParts[0];
+        String act = "";
+        for (int i = 1; i < actionParts.length; i++) {
+            act += actionParts[i];
+            if (actionParts[i + 1] != null) {
+                act += ".";
+            }
+        }
+        for (AgentAction agentAction : values()) {
+            if (agentAction.category.name().equals(cat) && agentAction.action.equals(act)) {
+                return agentAction;
+            }
+        }
+
+        return null;
+    }
+
     public AgentActionCategory category() {
         return category;
     }

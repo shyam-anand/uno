@@ -51,7 +51,7 @@ public class UnoResponse {
     }
 
     public void setAction(String action) {
-        this.action = AgentAction.valueOf(action);
+        this.action = AgentAction.fromString(action);
     }
 
     public Map<String, Object> getParameters() {
