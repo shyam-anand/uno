@@ -120,7 +120,7 @@ public class UnoService {
         unoResponse.setScore(result.getScore());
         unoResponse.setMessage(result.getFulfillment().getSpeech());
 
-        if (!unoResponse.getAction().equals(AgentAction.SMALLTALK_GREETINGS) && result.getContexts() != null && !result.getContexts().isEmpty()) {
+        if (unoResponse.getAction() != null && !unoResponse.getAction().equals(AgentAction.SMALLTALK_GREETINGS) && result.getContexts() != null && !result.getContexts().isEmpty()) {
             unoResponse.setParameters(
                     result.getContexts().stream().map(
                             context -> {
