@@ -70,7 +70,7 @@ public class UnoService {
             response = getAIResponse(agent, message, business.getName(), business.getId());
 
             AgentAction agentAction = response.getAction();
-            if (agentAction.category().equals(AgentActionCategory.SMALLTALK)) {
+            if (agentAction == null || agentAction.category().equals(AgentActionCategory.SMALLTALK)) {
                 messenger.sendTextMessage(response.getMessage(), fbUser, fbPage);
             } else {
                 switch (agentAction.category()) {
